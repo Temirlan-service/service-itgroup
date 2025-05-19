@@ -1,0 +1,502 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест по диагностике и ремонту ноутбуков Lenovo</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+            text-align: center;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1, h2 {
+            color: #333;
+        }
+        .intro, .question, .results {
+            display: none;
+        }
+        .intro.active, .question.active, .results.active {
+            display: block;
+        }
+        .question label {
+            display: block;
+            margin: 10px 0;
+            font-size: 16px;
+        }
+        .buttons {
+            margin-top: 20px;
+            display: none;
+        }
+        .buttons.active {
+            display: block;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007BFF;
+            color: #fff;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        input[type="radio"] {
+            margin-right: 10px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .correct {
+            color: green;
+        }
+        .incorrect {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Вводная страница -->
+        <div class="intro active">
+            <h1>Тест по уроку</h1>
+            <p>Основы диагностики и ремонта ноутбуков Lenovo, проверьте свои знания. Желаю удачи!</p>
+            <p>Не подсматривайте ответы в интернете, НАДЗИРАТЕЛЬ наблюдает!</p>
+            <button onclick="startTest()">Начать тест</button>
+        </div>
+
+        <!-- Вопросы -->
+        <div class="question" data-question="1">
+            <h2>1. Какой симптом указывает на проблему с питанием ноутбука Lenovo?</h2>
+            <label><input type="radio" name="q1" value="a"> Полосы на экране</label>
+            <label><input type="radio" name="q1" value="b"> Ноутбук не включается</label>
+            <label><input type="radio" name="q1" value="c"> Громкий шум вентилятора</label>
+            <label><input type="radio" name="q1" value="d"> Клавиши не работают</label>
+        </div>
+        <div class="question" data-question="2">
+            <h2>2. Что может быть причиной того, что ноутбук Lenovo не включается?</h2>
+            <label><input type="radio" name="q2" value="a"> Неисправность вентилятора</label>
+            <label><input type="radio" name="q2" value="b"> Поломка разъема питания</label>
+            <label><input type="radio" name="q2" value="c"> Поврежденный шлейф клавиатуры</label>
+            <label><input type="radio" name="q2" value="d"> Ошибка драйвера тачпада</label>
+        </div>
+        <div class="question" data-question="3">
+            <h2>3. Какой компонент может быть неисправен, если батарея не заряжается?</h2>
+            <label><input type="radio" name="q3" value="a"> Видеочип</label>
+            <label><input type="radio" name="q3" value="b"> Зарядное устройство</label>
+            <label><input type="radio" name="q3" value="c"> Клавиатура</label>
+            <label><input type="radio" name="q3" value="d"> Вентилятор</label>
+        </div>
+        <div class="question" data-question="4">
+            <h2>4. Какой симптом характерен для проблем с экраном ноутбука Lenovo?</h2>
+            <label><input type="radio" name="q4" value="a"> Высокая температура корпуса</label>
+            <label><input type="radio" name="q4" value="b"> Черный экран при включении</label>
+            <label><input type="radio" name="q4" value="c"> Самопроизвольный набор символов</label>
+            <label><input type="radio" name="q4" value="d"> Отключение батареи</label>
+        </div>
+        <div class="question" data-question="5">
+            <h2>5. Что может вызывать полосы или артефакты на экране Lenovo?</h2>
+            <label><input type="radio" name="q5" value="a"> Неисправность видеочипа</label>
+            <label><input type="radio" name="q5" value="b"> Разряженная батарея</label>
+            <label><input type="radio" name="q5" value="c"> Забитая система охлаждения</label>
+            <label><input type="radio" name="q5" value="d"> Поврежденный тачпад</label>
+        </div>
+        <div class="question" data-question="6">
+            <h2>6. Какой компонент может быть повреждён, если экран остаётся чёрным?</h2>
+            <label><input type="radio" name="q6" value="a"> Вентилятор</label>
+            <label><input type="radio" name="q6" value="b"> Шлейф дисплея</label>
+            <label><input type="radio" name="q6" value="c"> Батарея</label>
+            <label><input type="radio" name="q6" value="d"> Клавиатура</label>
+        </div>
+        <div class="question" data-question="7">
+            <h2>7. Какой симптом указывает на перегрев ноутбука Lenovo?</h2>
+            <label><input type="radio" name="q7" value="a"> Клавиши не работают</label>
+            <label><input type="radio" name="q7" value="b"> Высокая температура корпуса</label>
+            <label><input type="radio" name="q7" value="c"> Нет реакции на кнопку питания</label>
+            <label><input type="radio" name="q7" value="d"> Мерцание тачпада</label>
+        </div>
+        <div class="question" data-question="8">
+            <h2>8. Что может быть причиной внезапного выключения ноутбука Lenovo?</h2>
+            <label><input type="radio" name="q8" value="a"> Неисправность тачпада</label>
+            <label><input type="radio" name="q8" value="b"> Высохшая термопаста</label>
+            <label><input type="radio" name="q8" value="c"> Ошибка драйвера клавиатуры</label>
+            <label><input type="radio" name="q8" value="d"> Поврежденный шлейф экрана</label>
+        </div>
+        <div class="question" data-question="9">
+            <h2>9. Что может вызывать громкий шум вентилятора в ноутбуке Lenovo?</h2>
+            <label><input type="radio" name="q9" value="a"> Неисправность видеочипа</label>
+            <label><input type="radio" name="q9" value="b"> Забитая пылью система охлаждения</label>
+            <label><input type="radio" name="q9" value="c"> Поломка разъема питания</label>
+            <label><input type="radio" name="q9" value="d"> Попадание влаги на тачпад</label>
+        </div>
+        <div class="question" data-question="10">
+            <h2>10. Какой симптом характерен для неисправности клавиатуры Lenovo?</h2>
+            <label><input type="radio" name="q10" value="a"> Черный экран</label>
+            <label><input type="radio" name="q10" value="b"> Некоторые клавиши не работают</label>
+            <label><input type="radio" name="q10" value="c"> Высокая температура корпуса</label>
+            <label><input type="radio" name="q10" value="d"> Нет зарядки батареи</label>
+        </div>
+        <div class="question" data-question="11">
+            <h2>11. Что может быть причиной самопроизвольного набора символов клавиатурой?</h2>
+            <label><input type="radio" name="q11" value="a"> Высохшая термопаста</label>
+            <label><input type="radio" name="q11" value="b"> Попадание влаги</label>
+            <label><input type="radio" name="q11" value="c"> Неисправность видеочипа</label>
+            <label><input type="radio" name="q11" value="d"> Разряженная батарея</label>
+        </div>
+        <div class="question" data-question="12">
+            <h2>12. Какой метод диагностики питания следует выполнить первым?</h2>
+            <label><input type="radio" name="q12" value="a"> Проверить шлейфы внутри корпуса</label>
+            <label><input type="radio" name="q12" value="b"> Проверить зарядное устройство мультиметром</label>
+            <label><input type="radio" name="q12" value="c"> Подключить внешний монитор</label>
+            <label><input type="radio" name="q12" value="d"> Почистить радиатор</label>
+        </div>
+        <div class="question" data-question="13">
+            <h2>13. Как проверить, исправно ли зарядное устройство ноутбука Lenovo?</h2>
+            <label><input type="radio" name="q13" value="a"> Подключить к внешнему монитору</label>
+            <label><input type="radio" name="q13" value="b"> Измерить выходное напряжение мультиметром</label>
+            <label><input type="radio" name="q13" value="c"> Проверить температуру процессора</label>
+            <label><input type="radio" name="q13" value="d"> Включить экранную клавиатуру</label>
+        </div>
+        <div class="question" data-question="14">
+            <h2>14. Какой метод диагностики экрана помогает исключить неисправность видеочипа?</h2>
+            <label><input type="radio" name="q14" value="a"> Проверка температуры процессора</label>
+            <label><input type="radio" name="q14" value="b"> Подключение к внешнему монитору</label>
+            <label><input type="radio" name="q14" value="c"> Запуск без батареи</label>
+            <label><input type="radio" name="q14" value="d"> Проверка шлейфов клавиатуры</label>
+        </div>
+        <div class="question" data-question="15">
+            <h2>15. Что указывает на проблему с матрицей экрана Lenovo при диагностике?</h2>
+            <label><input type="radio" name="q15" value="a"> Изображение есть на внешнем мониторе</label>
+            <label><input type="radio" name="q15" value="b"> Нет изображения на внешнем мониторе</label>
+            <label><input type="radio" name="q15" value="c"> Вентилятор не работает</label>
+            <label><input type="radio" name="q15" value="d"> Клавиатура не отвечает</label>
+        </div>
+        <div class="question" data-question="16">
+            <h2>16. Какую программу можно использовать для проверки температуры процессора?</h2>
+            <label><input type="radio" name="q16" value="a"> Microsoft Word</label>
+            <label><input type="radio" name="q16" value="b"> AIDA64</label>
+            <label><input type="radio" name="q16" value="c"> Paint</label>
+            <label><input type="radio" name="q16" value="d"> Notepad</label>
+        </div>
+        <div class="question" data-question="17">
+            <h2>17. Какова нормальная температура процессора в простое для ноутбука Lenovo?</h2>
+            <label><input type="radio" name="q17" value="a"> 70–90°C</label>
+            <label><input type="radio" name="q17" value="b"> 40–55°C</label>
+            <label><input type="radio" name="q17" value="c"> 90–100°C</label>
+            <label><input type="radio" name="q17" value="d"> 20–30°C</label>
+        </div>
+        <div class="question" data-question="18">
+            <h2>18. Какой шаг диагностики перегрева включает чистку радиатора?</h2>
+            <label><input type="radio" name="q18" value="a"> Подключение внешнего монитора</label>
+            <label><input type="radio" name="q18" value="b"> Разборка системы охлаждения</label>
+            <label><input type="radio" name="q18" value="c"> Проверка зарядного устройства</label>
+            <label><input type="radio" name="q18" value="d"> Включение экранной клавиатуры</label>
+        </div>
+        <div class="question" data-question="19">
+            <h2>19. Какой метод диагностики клавиатуры исключает проблему с драйверами?</h2>
+            <label><input type="radio" name="q19" value="a"> Подключение внешнего монитора</label>
+            <label><input type="radio" name="q19" value="b"> Включение экранной клавиатуры</label>
+            <label><input type="radio" name="q19" value="c"> Проверка температуры процессора</label>
+            <label><input type="radio" name="q19" value="d"> Запуск без батареи</label>
+        </div>
+        <div class="question" data-question="20">
+            <h2>20. Что проверяют, если внешняя клавиатура работает, а встроенная нет?</h2>
+            <label><input type="radio" name="q20" value="a"> Видеочип</label>
+            <label><input type="radio" name="q20" value="b"> Шлейф клавиатуры</label>
+            <label><input type="radio" name="q20" value="c"> Зарядное устройство</label>
+            <label><input type="radio" name="q20" value="d"> Систему охлаждения</label>
+        </div>
+        <div class="question" data-question="21">
+            <h2>21. Какой компонент ноутбука Lenovo отвечает за быстродействие?</h2>
+            <label><input type="radio" name="q21" value="a"> Батарея</label>
+            <label><input type="radio" name="q21" value="b"> Оперативная память</label>
+            <label><input type="radio" name="q21" value="c"> Клавиатура</label>
+            <label><input type="radio" name="q21" value="d"> Разъём питания</label>
+        </div>
+        <div class="question" data-question="22">
+            <h2>22. Какой шаг разборки ноутбука Lenovo выполняется первым?</h2>
+            <label><input type="radio" name="q22" value="a"> Снятие системы охлаждения</label>
+            <label><input type="radio" name="q22" value="b"> Выключение и снятие аккумулятора</label>
+            <label><input type="radio" name="q22" value="c"> Извлечение материнской платы</label>
+            <label><input type="radio" name="q22" value="d"> Отсоединение шлейфа дисплея</label>
+        </div>
+        <div class="question" data-question="23">
+            <h2>23. Что нужно сделать перед снятием системы охлаждения Lenovo?</h2>
+            <label><input type="radio" name="q23" value="a"> Подключить внешний монитор</label>
+            <label><input type="radio" name="q23" value="b"> Открутить нижнюю крышку</label>
+            <label><input type="radio" name="q23" value="c"> Проверить драйверы</label>
+            <label><input type="radio" name="q23" value="d"> Включить экранную клавиатуру</label>
+        </div>
+        <div class="question" data-question="24">
+            <h2>24. Какой компонент нужно извлечь для глубокого ремонта ноутбука Lenovo?</h2>
+            <label><input type="radio" name="q24" value="a"> Клавиатуру</label>
+            <label><input type="radio" name="q24" value="b"> Материнскую плату</label>
+            <label><input type="radio" name="q24" value="c"> Батарею</label>
+            <label><input type="radio" name="q24" value="d"> Тачпад</label>
+        </div>
+        <div class="question" data-question="25">
+            <h2>25. В каком порядке выполняется сборка ноутбука Lenovo после разборки?</h2>
+            <label><input type="radio" name="q25" value="a"> В случайном порядке</label>
+            <label><input type="radio" name="q25" value="b"> В обратном порядке разборки</label>
+            <label><input type="radio" name="q25" value="c"> Сначала шлейфы, потом крышка</label>
+            <label><input type="radio" name="q25" value="d"> Сначала аккумулятор, потом плата</label>
+        </div>
+
+        <!-- Кнопки навигации -->
+        <div class="buttons">
+            <button onclick="prevQuestion()">Предыдущий вопрос</button>
+            <button onclick="nextQuestion()">Следующий вопрос</button>
+            <button onclick="finishTest()">Завершить тест</button>
+        </div>
+
+        <!-- Результаты -->
+        <div class="results">
+            <h2>Результаты теста</h2>
+            <p id="score"></p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Вопрос</th>
+                        <th>Ваш ответ</th>
+                        <th>Правильный ответ</th>
+                        <th>Статус</th>
+                        <th>Объяснение</th>
+                    </tr>
+                </thead>
+                <tbody id="resultsTable"></tbody>
+            </table>
+            <button onclick="restartTest()">Пройти тест заново</button>
+        </div>
+    </div>
+
+    <script>
+        let currentQuestion = 0;
+        const totalQuestions = 25;
+        const correctAnswers = {
+            q1: 'b', q2: 'b', q3: 'b', q4: 'b', q5: 'a',
+            q6: 'b', q7: 'b', q8: 'b', q9: 'b', q10: 'b',
+            q11: 'b', q12: 'b', q13: 'b', q14: 'b', q15: 'a',
+            q16: 'b', q17: 'b', q18: 'b', q19: 'b', q20: 'b',
+            q21: 'b', q22: 'b', q23: 'b', q24: 'b', q25: 'b'
+        };
+        const questionsText = {
+            q1: 'Какой симптом указывает на проблему с питанием ноутбука Lenovo?',
+            q2: 'Что может быть причиной того, что ноутбук Lenovo не включается?',
+            q3: 'Какой компонент может быть неисправен, если батарея не заряжается?',
+            q4: 'Какой симптом характерен для проблем с экраном ноутбука Lenovo?',
+            q5: 'Что может вызывать полосы или артефакты на экране Lenovo?',
+            q6: 'Какой компонент может быть повреждён, если экран остаётся чёрным?',
+            q7: 'Какой симптом указывает на перегрев ноутбука Lenovo?',
+            q8: 'Что может быть причиной внезапного выключения ноутбука Lenovo?',
+            q9: 'Что может вызывать громкий шум вентилятора в ноутбуке Lenovo?',
+            q10: 'Какой симптом характерен для неисправности клавиатуры Lenovo?',
+            q11: 'Что может быть причиной самопроизвольного набора символов клавиатурой?',
+            q12: 'Какой метод диагностики питания следует выполнить первым?',
+            q13: 'Как проверить, исправно ли зарядное устройство ноутбука Lenovo?',
+            q14: 'Какой метод диагностики экрана помогает исключить неисправность видеочипа?',
+            q15: 'Что указывает на проблему с матрицей экрана Lenovo при диагностике?',
+            q16: 'Какую программу можно использовать для проверки температуры процессора?',
+            q17: 'Какова нормальная температура процессора в простое для ноутбука Lenovo?',
+            q18: 'Какой шаг диагностики перегрева включает чистку радиатора?',
+            q19: 'Какой метод диагностики клавиатуры исключает проблему с драйверами?',
+            q20: 'Что проверяют, если внешняя клавиатура работает, а встроенная нет?',
+            q21: 'Какой компонент ноутбука Lenovo отвечает за быстродействие?',
+            q22: 'Какой шаг разборки ноутбука Lenovo выполняется первым?',
+            q23: 'Что нужно сделать перед снятием системы охлаждения Lenovo?',
+            q24: 'Какой компонент нужно извлечь для глубокого ремонта ноутбука Lenovo?',
+            q25: 'В каком порядке выполняется сборка ноутбука Lenovo после разборки?'
+        };
+        const optionsText = {
+            q1: { a: 'Полосы на экране', b: 'Ноутбук не включается', c: 'Громкий шум вентилятора', d: 'Клавиши не работают' },
+            q2: { a: 'Неисправность вентилятора', b: 'Поломка разъема питания', c: 'Поврежденный шлейф клавиатуры', d: 'Ошибка драйвера тачпада' },
+            q3: { a: 'Видеочип', b: 'Зарядное устройство', c: 'Клавиатура', d: 'Вентилятор' },
+            q4: { a: 'Высокая температура корпуса', b: 'Черный экран при включении', c: 'Самопроизвольный набор символов', d: 'Отключение батареи' },
+            q5: { a: 'Неисправность видеочипа', b: 'Разряженная батарея', c: 'Забитая система охлаждения', d: 'Поврежденный тачпад' },
+            q6: { a: 'Вентилятор', b: 'Шлейф дисплея', c: 'Батарея', d: 'Клавиатура' },
+            q7: { a: 'Клавиши не работают', b: 'Высокая температура корпуса', c: 'Нет реакции на кнопку питания', d: 'Мерцание тачпада' },
+            q8: { a: 'Неисправность тачпада', b: 'Высохшая термопаста', c: 'Ошибка драйвера клавиатуры', d: 'Поврежденный шлейф экрана' },
+            q9: { a: 'Неисправность видеочипа', b: 'Забитая пылью система охлаждения', c: 'Поломка разъема питания', d: 'Попадание влаги на тачпад' },
+            q10: { a: 'Черный экран', b: 'Некоторые клавиши не работают', c: 'Высокая температура корпуса', d: 'Нет зарядки батареи' },
+            q11: { a: 'Высохшая термопаста', b: 'Попадание влаги', c: 'Неисправность видеочипа', d: 'Разряженная батарея' },
+            q12: { a: 'Проверить шлейфы внутри корпуса', b: 'Проверить зарядное устройство мультиметром', c: 'Подключить внешний монитор', d: 'Почистить радиатор' },
+            q13: { a: 'Подключить к внешнему монитору', b: 'Измерить выходное напряжение мультиметром', c: 'Проверить температуру процессора', d: 'Включить экранную клавиатуру' },
+            q14: { a: 'Проверка температуры процессора', b: 'Подключение к внешнему монитору', c: 'Запуск без батареи', d: 'Проверка шлейфов клавиатуры' },
+            q15: { a: 'Изображение есть на внешнем мониторе', b: 'Нет изображения на внешнем мониторе', c: 'Вентилятор не работает', d: 'Клавиатура не отвечает' },
+            q16: { a: 'Microsoft Word', b: 'AIDA64', c: 'Paint', d: 'Notepad' },
+            q17: { a: '70–90°C', b: '40–55°C', c: '90–100°C', d: '20–30°C' },
+            q18: { a: 'Подключение внешнего монитора', b: 'Разборка системы охлаждения', c: 'Проверка зарядного устройства', d: 'Включение экранной клавиатуры' },
+            q19: { a: 'Подключение внешнего монитора', b: 'Включение экранной клавиатуры', c: 'Проверка температуры процессора', d: 'Запуск без батареи' },
+            q20: { a: 'Видеочип', b: 'Шлейф клавиатуры', c: 'Зарядное устройство', d: 'Систему охлаждения' },
+            q21: { a: 'Батарея', b: 'Оперативная память', c: 'Клавиатура', d: 'Разъём питания' },
+            q22: { a: 'Снятие системы охлаждения', b: 'Выключение и снятие аккумулятора', c: 'Извлечение материнской платы', d: 'Отсоединение шлейфа дисплея' },
+            q23: { a: 'Подключить внешний монитор', b: 'Открутить нижнюю крышку', c: 'Проверить драйверы', d: 'Включить экранную клавиатуру' },
+            q24: { a: 'Клавиатуру', b: 'Материнскую плату', c: 'Батарею', d: 'Тачпад' },
+            q25: { a: 'В случайном порядке', b: 'В обратном порядке разборки', c: 'Сначала шлейфы, потом крышка', d: 'Сначала аккумулятор, потом плата' }
+        };
+        const explanations = {
+            q1: 'Ноутбук не включается — типичный симптом проблемы с питанием.',
+            q2: 'Поломка разъема питания может препятствовать включению ноутбука.',
+            q3: 'Неисправное зарядное устройство может быть причиной незаряжаемой батареи.',
+            q4: 'Черный экран при включении указывает на проблему с экраном.',
+            q5: 'Полосы или артефакты часто вызваны неисправностью видеочипа.',
+            q6: 'Поврежденный шлейф дисплея может приводить к чёрному экрану.',
+            q7: 'Высокая температура корпуса — признак перегрева ноутбука.',
+            q8: 'Высохшая термопаста может вызывать перегрев и выключение.',
+            q9: 'Забитая пылью система охлаждения приводит к громкому шуму вентилятора.',
+            q10: 'Неработающие клавиши — симптом неисправности клавиатуры.',
+            q11: 'Попадание влаги может вызывать самопроизвольный набор символов.',
+            q12: 'Первым шагом проверяют зарядное устройство мультиметром.',
+            q13: 'Мультиметр измеряет выходное напряжение зарядного устройства.',
+            q14: 'Подключение к внешнему монитору исключает неисправность видеочипа.',
+            q15: 'Изображение на внешнем мониторе указывает на проблему с матрицей.',
+            q16: 'AIDA64 используется для проверки температуры процессора.',
+            q17: 'Нормальная температура процессора в простое — 40–55°C.',
+            q18: 'Разборка системы охлаждения включает чистку радиатора.',
+            q19: 'Экранная клавиатура помогает исключить проблему с драйверами.',
+            q20: 'Если внешняя клавиатура работает, проверяют шлейф встроенной.',
+            q21: 'Оперативная память отвечает за быстродействие ноутбука.',
+            q22: 'Первый шаг разборки — выключение и снятие аккумулятора.',
+            q23: 'Перед снятием системы охлаждения откручивают нижнюю крышку.',
+            q24: 'Материнская плата извлекается для глубокого ремонта.',
+            q25: 'Сборка выполняется в обратном порядке разборки.'
+        };
+        const answers = {};
+
+        function startTest() {
+            document.querySelector('.intro').classList.remove('active');
+            currentQuestion = 1;
+            document.querySelector(`.question[data-question="${currentQuestion}"]`).classList.add('active');
+            document.querySelector('.buttons').classList.add('active');
+        }
+
+        function prevQuestion() {
+            if (currentQuestion > 1) {
+                document.querySelector(`.question[data-question="${currentQuestion}"]`).classList.remove('active');
+                currentQuestion--;
+                document.querySelector(`.question[data-question="${currentQuestion}"]`).classList.add('active');
+            }
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < totalQuestions) {
+                document.querySelector(`.question[data-question="${currentQuestion}"]`).classList.remove('active');
+                currentQuestion++;
+                document.querySelector(`.question[data-question="${currentQuestion}"]`).classList.add('active');
+            }
+        }
+
+        function finishTest() {
+            let score = 0;
+            for (let i = 1; i <= totalQuestions; i++) {
+                const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                if (selected) {
+                    answers[`q${i}`] = selected.value;
+                    if (selected.value === correctAnswers[`q${i}`]) {
+                        score++;
+                    }
+                }
+            }
+
+            document.querySelector(`.question[data-question="${currentQuestion}"]`).classList.remove('active');
+            document.querySelector('.buttons').classList.remove('active');
+            document.querySelector('.results').classList.add('active');
+            document.getElementById('score').innerText = `Вы набрали ${score} из ${totalQuestions} баллов!`;
+
+            const resultsTable = document.getElementById('resultsTable');
+            resultsTable.innerHTML = '';
+            for (let i = 1; i <= totalQuestions; i++) {
+                const row = document.createElement('tr');
+                const questionCell = document.createElement('td');
+                const userAnswerCell = document.createElement('td');
+                const correctAnswerCell = document.createElement('td');
+                const statusCell = document.createElement('td');
+                const explanationCell = document.createElement('td');
+
+                questionCell.innerText = questionsText[`q${i}`];
+                const userAnswer = answers[`q${i}`] || 'Не отвечено';
+                userAnswerCell.innerText = optionsText[`q${i}`][userAnswer] || 'Не отвечено';
+                correctAnswerCell.innerText = optionsText[`q${i}`][correctAnswers[`q${i}`]];
+                statusCell.innerText = userAnswer === correctAnswers[`q${i}`] ? 'Правильно' : 'Неправильно';
+                statusCell.className = userAnswer === correctAnswers[`q${i}`] ? 'correct' : 'incorrect';
+                explanationCell.innerText = explanations[`q${i}`];
+
+                row.appendChild(questionCell);
+                row.appendChild(userAnswerCell);
+                row.appendChild(correctAnswerCell);
+                row.appendChild(statusCell);
+                row.appendChild(explanationCell);
+                resultsTable.appendChild(row);
+            }
+        }
+
+        function restartTest() {
+            currentQuestion = 0;
+            document.querySelector('.results').classList.remove('active');
+            document.querySelector('.intro').classList.add('active');
+            document.querySelector('.buttons').classList.remove('active');
+            document.querySelectorAll('input[type="radio"]').forEach(input => input.checked = false);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест по устройству и принципу работы картриджей</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; }
+        .quiz-container { max-width: 800px; margin: auto; }
+        .question { margin-bottom: 20px; }
+        .options label { display: block; margin: 10px 0; }
+        .buttons { margin-top: 20px; }
+        .result-table { margin-top: 20px; border-collapse: collapse; width: 100%; }
+        .result-table th, .result-table td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        .correct { color: green; }
+        .incorrect { color: red; }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <h1>Тест по уроку</h1>
+        <p>День 2: Устройство и принцип работы картриджей. Проверьте свои знания!</p>
+        <p><strong>Не подсматривайте ответы в интернете, НАДЗИРАТЕЛЬ наблюдает!</strong></p>
+        <button onclick="startQuiz()">Начать тест</button>
+
+        <div id="quiz" style="display: none;">
+            <div class="question" id="question-1">
+                <h3>1. Что находится внутри лазерного картриджа?</h3>
+                <div class="options">
+                    <label><input type="radio" name="q1" value="A"> A) Жидкие чернила</label>
+                    <label><input type="radio" name="q1" value="B"> B) Пьезоэлементы</label>
+                    <label><input type="radio" name="q1" value="C"> C) Тонер и фотобарабан</label>
+                    <label><input type="radio" name="q1" value="D"> D) СНПЧ</label>
+                </div>
+            </div>
+
+            <div class="question" id="question-2" style="display: none;">
+                <h3>2. Какой компонент переносит тонер на фотобарабан?</h3>
+                <div class="options">
+                    <label><input type="radio" name="q2" value="A"> A) Магнитный вал</label>
+                    <label><input type="radio" name="q2" value="B"> B) Лезвие очистки</label>
+                    <label><input type="radio" name="q2" value="C"> C) Ракель</label>
+                    <label><input type="radio" name="q2" value="D"> D) Бункер для отработки</label>
+                </div>
+            </div>
+
+            <div class="question" id="question-3" style="display: none;">
+                <h3>3. Что такое СНПЧ?</h3>
+                <div class="options">
+                    <label><input type="radio" name="q3" value="A"> A) Лазерный картридж</label>
+                    <label><input type="radio" name="q3" value="B"> B) Система непрерывной подачи чернил</label>
+                    <label><input type="radio" name="q3" value="C"> C) Тонер для струйных принтеров</label>
+                    <label><input type="radio" name="q3" value="D"> D) Фотобарабан</label>
+                </div>
+            </div>
+
+            <div class="question" id="question-4" style="display: none;">
+                <h3>4. Какой этап лазерной печати закрепляет тонер на бумаге?</h3>
+                <div class="options">
+                    <label><input type="radio" name="q4" value="A"> A) Зарядка</label>
+                    <label><input type="radio" name="q4" value="B"> B) Экспонирование</label>
+                    <label><input type="radio" name="q4" value="C"> C) Проявление</label>
+                    <label><input type="radio" name="q4" value="D"> D) Запекание</label>
+                </div>
+            </div>
+
+            <div class="question" id="question-5" style="display: none;">
+                <h3>5. Как работают термоструйные принтеры?</h3>
+                <div class="options">
+                    <label><input type="radio" name="q5" value="A"> A) Чернила выдавливаются пьезоэлементами</label>
+                    <label><input type="radio" name="q5" value="B"> B) Используется тонер</label>
+                    <label><input type="radio" name="q5" value="C"> C) Чернила нагреваются для выброса</label>
+                    <label><input type="radio" name="q5" value="D"> D) Лазер формирует изображение</label>
+                </div>
+            </div>
+
+            <div class="question" id="question-6" style="display: none;">
+                <h3>6. Что может вызвать бледную печать в лазерном принтере?</h3>
+                <div class="options">
+                    <label><input type="radio" name="q6" value="A"> A) Закончился тонер</label>
+                    <label><input type="radio" name="q6" value="B"> B) Засорение сопел</label>
+                    <label><input type="radio" name="q6" value="C"> C) Повреждена печатающая головка</label>
+                    <label><input type="radio" name="q6" value="D"> D) Неправильный формат бумаги</label>
+                </div>
+            </div>
+
+            <div class="question" id="question-7" style="display: none;">
+                <h3>7. Какой метод диагностики помогает при бледной печати лазерного картриджа?</h3>
+                <div class="options">
+                    <label><input type="radio" name="q7" value="A"> A) Прочистка сопел спиртом</label>
+                    <label><input type="radio" name="q7" value="B"> B) Перезагрузка принтера</label>
+                    <label><input type="radio" name="q7" value="C"> C) Замена пьезоэлементов</label>
+                    <label><input type="radio" name="q7" value="D"> D) Встряхивание картриджа</label>
+                </div>
+            </div>
+
+            <div class="question" id="question-8" style="display: none;">
+                <h3>8. Что чаще всего вызывает полосы при печати на струйном принтере?</h3>
+                <div class="options">
+                    <label><input type="radio" name="q8" value="A"> A) Износ фотобарабана</label>
+                    <label><input type="radio" name="q8" value="B"> B) Закончился тонер</label>
+                    <label><input type="radio" name="q8" value="C"> C) Засорение сопел</label>
+                    <label><input type="radio" name="q8" value="D"> D) Повреждение магнитного вала</label>
+                </div>
+            </div>
+
+            <div class="question" id="question-9" style="display: none;">
+                <h3>9. Какой раствор лучше всего подходит для прочистки струйных картриджей?</h3>
+                <div class="options">
+                    <label><input type="radio" name="q9" value="A"> A) Медицинский спирт</label>
+                    <label><input type="radio" name="q9" value="B"> B) Изопропиловый спирт</label>
+                    <label><input type="radio" name="q9" value="C"> C) Ацетон</label>
+                    <label><input type="radio" name="q9" value="D"> D) Вода</label>
+                </div>
+            </div>
+
+            <div class="question" id="question-10" style="display: none;">
+                <h3>10. Почему ацетон не рекомендуется для чистки картриджей?</h3>
+                <div class="options">
+                    <label><input type="radio" name="q10" value="A"> A) Слишком агрессивен, повреждает детали</label>
+                    <label><input type="radio" name="q10" value="B"> B) Оставляет масляный налет</label>
+                    <label><input type="radio" name="q10" value="C"> C) Не растворяет чернила</label>
+                    <label><input type="radio" name="q10" value="D"> D) Медленно испаряется</label>
+                </div>
+            </div>
+
+            <div class="question" id="question-11" style="display: none;">
+                <h3>11. Какой компонент удаляет остатки тонера с фотобарабана?</h3>
+                <div class="options">
+                    <label><input type="radio" name="q11" value="A"> A) Вал заряда</label>
+                    <label><input type="radio" name="q11" value="B"> B) Дозирующее лезвие</label>
+                    <label><input type="radio" name="q11" value="C"> C) Лезвие очистки</label>
+                    <label><input type="radio" name="q11" value="D"> D) Магнитный вал</label>
+                </div>
+            </div>
+
+            <div class="question" id="question-12" style="display: none;">
+                <h3>12. Какую функцию выполняет ракель в лазерном картридже?</h3>
+                <div class="options">
+                    <label><input type="radio" name="q12" value="A"> A) Регулирует подачу тонера</label>
+                    <label><input type="radio" name="q12" value="B"> B) Заряжает фотобарабан</label>
+                    <label><input type="radio" name="q12" value="C"> C) Очищает бункер</label>
+                    <label><input type="radio" name="q12" value="D"> D) Нагревает бумагу</label>
+                </div>
+            </div>
+
+            <div class="question" id="question-13" style="display: none;">
+                <h3>13. Какой этап лазерной печати формирует изображение на фотобарабане?</h3>
+                <div class="options">
+                    <label><input type="radio" name="q13" value="A"> A) Зарядка</label>
+                    <label><input type="radio" name="q13" value="B"> B) Перенос</label>
+                    <label><input type="radio" name="q13" value="C"> C) Проявление</label>
+                    <label><input type="radio" name="q13" value="D"> D) Экспонирование</label>
+                </div>
+            </div>
+
+            <div class="question" id="question-14" style="display: none;">
+                <h3>14. Что происходит на этапе проявления в лазерной печати?</h3>
+                <div class="options">
+                    <label><input type="radio" name="q14" value="A"> A) Изображение переносится на бумагу</label>
+                    <label><input type="radio" name="q14" value="B"> B) Тонер прилипает к заряженным участкам</label>
+                    <label><input type="radio" name="q14" value="C"> C) Фотобарабан заряжается</label>
+                    <label><input type="radio" name="q14" value="D"> D) Тонер закрепляется нагревом</label>
+                </div>
+            </div>
+
+            <div class="question" id="question-15" style="display: none;">
+                <h3>15. Какой компонент струйного картриджа распыляет чернила?</h3>
+                <div class="options">
+                    <label><input type="radio" name="q15" value="A"> A) Фотобарабан</label>
+                    <label><input type="radio" name="q15" value="B"> B) Магнитный вал</label>
+                    <label><input type="radio" name="q15" value="C"> C) Ракель</label>
+                    <label><input type="radio" name="q15" value="D"> D) Печатающая головка</label>
+                </div>
+            </div>
+
+            <div class="question" id="question-16" style="display: none;">
+                <h3>16. Что может вызывать чёрные полосы в лазерном принтере?</h3>
+                <div class="options">
+                    <label><input type="radio" name="q16" value="A"> A) Засорение сопел</label>
+                    <label><input type="radio" name="q16" value="B"> B) Износ ракеля</label>
+                    <label><input type="radio" name="q16" value="C"> C) Закончились чернила</label>
+                    <label><input type="radio" name="q16" value="D"> D) Неправильная бумага</label>
+                </div>
+            </div>
+
+            <div class="question" id="question-17" style="display: none;">
+                <h3>17. Какой метод диагностики помогает при полосах на струйном принтере?</h3>
+                <div class="options">
+                    <label><input type="radio" name="q17" value="A"> A) Встряхивание картриджа</label>
+                    <label><input type="radio" name="q17" value="B"> B) Замена фотобарабана</label>
+                    <label><input type="radio" name="q17" value="C"> C) Автоматическая очистка головки</label>
+                    <label><input type="radio" name="q17" value="D"> D) Очистка магнитного вала</label>
+                </div>
+            </div>
+
+            <div class="question" id="question-18" style="display: none;">
+                <h3>18. Что такое бункер для отработки в лазерном картридже?</h3>
+                <div class="options">
+                    <label><input type="radio" name="q18" value="A"> A) Хранит свежий тонер</label>
+                    <label><input type="radio" name="q18" value="B"> B) Распыляет чернила</label>
+                    <label><input type="radio" name="q18" value="C"> C) Заряжает фотобарабан</label>
+                    <label><input type="radio" name="q18" value="D"> D) Собирает излишки тонера</label>
+                </div>
+            </div>
+
+            <div class="question" id="question-19" style="display: none;">
+                <h3>19. Какой тип принтеров использует пьезоэлементы?</h3>
+                <div class="options">
+                    <label><input type="radio" name="q19" value="A"> A) Пьезоструйные</label>
+                    <label><input type="radio" name="q19" value="B"> B) Лазерные</label>
+                    <label><input type="radio" name="q19" value="C"> C) Термоструйные</label>
+                    <label><input type="radio" name="q19" value="D"> D) Матричные</label>
+                </div>
+            </div>
+
+            <div class="question" id="question-20" style="display: none;">
+                <h3>20. Что может вызывать пятна на отпечатке лазерного принтера?</h3>
+                <div class="options">
+                    <label><input type="radio" name="q20" value="A"> A) Засорение сопел</label>
+                    <label><input type="radio" name="q20" value="B"> B) Закончились чернила</label>
+                    <label><input type="radio" name="q20" value="C"> C) Загрязнение фотобарабана</label>
+                    <label><input type="radio" name="q20" value="D"> D) Повреждение печатающей головки</label>
+                </div>
+            </div>
+
+            <div class="question" id="question-21" style="display: none;">
+                <h3>21. Какой спирт менее эффективен для очистки струйных картриджей?</h3>
+                <div class="options">
+                    <label><input type="radio" name="q21" value="A"> A) Изопропиловый</label>
+                    <label><input type="radio" name="q21" value="B"> B) Этиловый</label>
+                    <label><input type="radio" name="q21" value="C"> C) Медицинский</label>
+                    <label><input type="radio" name="q21" value="D"> D) Ацетоновый</label>
+                </div>
+            </div>
+
+            <div class="question" id="question-22" style="display: none;">
+                <h3>22. Какой компонент регулирует количество тонера в лазерном картридже?</h3>
+                <div class="options">
+                    <label><input type="radio" name="q22" value="A"> A) Лезвие очистки</label>
+                    <label><input type="radio" name="q22" value="B"> B) Вал заряда</label>
+                    <label><input type="radio" name="q22" value="C"> C) Бункер для отработки</label>
+                    <label><input type="radio" name="q22" value="D"> D) Дозирующее лезвие</label>
+                </div>
+            </div>
+
+            <div class="question" id="question-23" style="display: none;">
+                <h3>23. Что может быть причиной отсутствия чернил в струйном принтере?</h3>
+                <div class="options">
+                    <label><input type="radio" name="q23" value="A"> A) Износ фотобарабана</label>
+                    <label><input type="radio" name="q23" value="B"> B) Высохшие чернила</label>
+                    <label><input type="radio" name="q23" value="C"> C) Закончился тонер</label>
+                    <label><input type="radio" name="q23" value="D"> D) Неправильная зарядка</label>
+                </div>
+            </div>
+
+            <div class="question" id="question-24" style="display: none;">
+                <h3>24. Какой этап лазерной печати подготавливает фотобарабан?</h3>
+                <div class="options">
+                    <label><input type="radio" name="q24" value="A"> A) Перенос</label>
+                    <label><input type="radio" name="q24" value="B"> B) Запекание</label>
+                    <label><input type="radio" name="q24" value="C"> C) Зарядка</label>
+                    <label><input type="radio" name="q24" value="D"> D) Проявление</label>
+                </div>
+            </div>
+
+            <div class="question" id="question-25" style="display: none;">
+                <h3>25. Почему медицинский спирт не подходит для очистки картриджей?</h3>
+                <div class="options">
+                    <label><input type="radio" name="q25" value="A"> A) Слишком агрессивен</label>
+                    <label><input type="radio" name="q25" value="B"> B) Не растворяет чернила</label>
+                    <label><input type="radio" name="q25" value="C"> C) Содержит примеси, оставляет налет</label>
+                    <label><input type="radio" name="q25" value="D"> D) Медленно испаряется</label>
+                </div>
+            </div>
+
+            <div class="buttons">
+                <button onclick="prevQuestion()">Предыдущий вопрос</button>
+                <button onclick="nextQuestion()">Следующий вопрос</button>
+                <button onclick="finishQuiz()">Завершить тест</button>
+            </div>
+        </div>
+
+        <div id="results" style="display: none;">
+            <h2>Результаты теста</h2>
+            <table class="result-table">
+                <tr>
+                    <th>Вопрос</th>
+                    <th>Ваш ответ</th>
+                    <th>Правильный ответ</th>
+                    <th>Статус</th>
+                    <th>Объяснение</th>
+                </tr>
+                <tr>
+                    <td>1. Что находится внутри лазерного картриджа?</td>
+                    <td id="user-answer-1"></td>
+                    <td>C</td>
+                    <td id="status-1"></td>
+                    <td>Лазерный картридж содержит тонер и фотобарабан для печати.</td>
+                </tr>
+                <tr>
+                    <td>2. Какой компонент переносит тонер на фотобарабан?</td>
+                    <td id="user-answer-2"></td>
+                    <td>A</td>
+                    <td id="status-2"></td>
+                    <td>Магнитный вал переносит тонер на фотобарабан.</td>
+                </tr>
+                <tr>
+                    <td>3. Что такое СНПЧ?</td>
+                    <td id="user-answer-3"></td>
+                    <td>B</td>
+                    <td id="status-3"></td>
+                    <td>СНПЧ — это система непрерывной подачи чернил для струйных принтеров.</td>
+                </tr>
+                <tr>
+                    <td>4. Какой этап лазерной печати закрепляет тонер на бумаге?</td>
+                    <td id="user-answer-4"></td>
+                    <td>D</td>
+                    <td id="status-4"></td>
+                    <td>Запекание закрепляет тонер на бумаге путем нагрева.</td>
+                </tr>
+                <tr>
+                    <td>5. Как работают термоструйные принтеры?</td>
+                    <td id="user-answer-5"></td>
+                    <td>C</td>
+                    <td id="status-5"></td>
+                    <td>Термоструйные принтеры нагревают чернила для их выброса.</td>
+                </tr>
+                <tr>
+                    <td>6. Что может вызвать бледную печать в лазерном принтере?</td>
+                    <td id="user-answer-6"></td>
+                    <td>A</td>
+                    <td id="status-6"></td>
+                    <td>Бледная печать часто вызвана нехваткой тонера.</td>
+                </tr>
+                <tr>
+                    <td>7. Какой метод диагностики помогает при бледной печати лазерного картриджа?</td>
+                    <td id="user-answer-7"></td>
+                    <td>D</td>
+                    <td id="status-7"></td>
+                    <td>Встряхивание картриджа может распределить тонер.</td>
+                </tr>
+                <tr>
+                    <td>8. Что чаще всего вызывает полосы при печати на струйном принтере?</td>
+                    <td id="user-answer-8"></td>
+                    <td>C</td>
+                    <td id="status-8"></td>
+                    <td>Полосы обычно возникают из-за засорения сопел.</td>
+                </tr>
+                <tr>
+                    <td>9. Какой раствор лучше всего подходит для прочистки струйных картриджей?</td>
+                    <td id="user-answer-9"></td>
+                    <td>B</td>
+                    <td id="status-9"></td>
+                    <td>Изопропиловый спирт эффективно очищает сопла.</td>
+                </tr>
+                <tr>
+                    <td>10. Почему ацетон не рекомендуется для чистки картриджей?</td>
+                    <td id="user-answer-10"></td>
+                    <td>A</td>
+                    <td id="status-10"></td>
+                    <td>Ацетон слишком агрессивен и может повредить детали.</td>
+                </tr>
+                <tr>
+                    <td>11. Какой компонент удаляет остатки тонера с фотобарабана?</td>
+                    <td id="user-answer-11"></td>
+                    <td>C</td>
+                    <td id="status-11"></td>
+                    <td>Лезвие очистки удаляет остатки тонера с фотобарабана.</td>
+                </tr>
+                <tr>
+                    <td>12. Какую функцию выполняет ракель в лазерном картридже?</td>
+                    <td id="user-answer-12"></td>
+                    <td>A</td>
+                    <td id="status-12"></td>
+                    <td>Ракель регулирует подачу тонера в картридже.</td>
+                </tr>
+                <tr>
+                    <td>13. Какой этап лазерной печати формирует изображение на фотобарабане?</td>
+                    <td id="user-answer-13"></td>
+                    <td>D</td>
+                    <td id="status-13"></td>
+                    <td>Экспонирование создаёт изображение на фотобарабане с помощью лазера.</td>
+                </tr>
+                <tr>
+                    <td>14. Что происходит на этапе проявления в лазерной печати?</td>
+                    <td id="user-answer-14"></td>
+                    <td>B</td>
+                    <td id="status-14"></td>
+                    <td>На этапе проявления тонер прилипает к заряженным участкам фотобарабана.</td>
+                </tr>
+                <tr>
+                    <td>15. Какой компонент струйного картриджа распыляет чернила?</td>
+                    <td id="user-answer-15"></td>
+                    <td>D</td>
+                    <td id="status-15"></td>
+                    <td>Печатающая головка распыляет чернила на бумагу.</td>
+                </tr>
+                <tr>
+                    <td>16. Что может вызывать чёрные полосы в лазерном принтере?</td>
+                    <td id="user-answer-16"></td>
+                    <td>B</td>
+                    <td id="status-16"></td>
+                    <td>Износ ракеля может вызывать чёрные полосы на отпечатке.</td>
+                </tr>
+                <tr>
+                    <td>17. Какой метод диагностики помогает при полосах на струйном принтере?</td>
+                    <td id="user-answer-17"></td>
+                    <td>C</td>
+                    <td id="status-17"></td>
+                    <td>Автоматическая очистка головки устраняет засорение сопел.</td>
+                </tr>
+                <tr>
+                    <td>18. Что такое бункер для отработки в лазерном картридже?</td>
+                    <td id="user-answer-18"></td>
+                    <td>D</td>
+                    <td id="status-18"></td>
+                    <td>Бункер для отработки собирает излишки тонера.</td>
+                </tr>
+                <tr>
+                    <td>19. Какой тип принтеров использует пьезоэлементы?</td>
+                    <td id="user-answer-19"></td>
+                    <td>A</td>
+                    <td id="status-19"></td>
+                    <td>Пьезоструйные принтеры используют пьезоэлементы.</td>
+                </tr>
+                <tr>
+                    <td>20. Что может вызывать пятна на отпечатке лазерного принтера?</td>
+                    <td id="user-answer-20"></td>
+                    <td>C</td>
+                    <td id="status-20"></td>
+                    <td>Загрязнение фотобарабана вызывает пятна на отпечатке.</td>
+                </tr>
+                <tr>
+                    <td>21. Какой спирт менее эффективен для очистки струйных картриджей?</td>
+                    <td id="user-answer-21"></td>
+                    <td>B</td>
+                    <td id="status-21"></td>
+                    <td>Этиловый спирт менее эффективен, чем изопропиловый.</td>
+                </tr>
+                <tr>
+                    <td>22. Какой компонент регулирует количество тонера в лазерном картридже?</td>
+                    <td id="user-answer-22"></td>
+                    <td>D</td>
+                    <td id="status-22"></td>
+                    <td>Дозирующее лезвие контролирует количество тонера.</td>
+                </tr>
+                <tr>
+                    <td>23. Что может быть причиной отсутствия чернил в струйном принтере?</td>
+                    <td id="user-answer-23"></td>
+                    <td>B</td>
+                    <td id="status-23"></td>
+                    <td>Высохшие чернила блокируют подачу в сопла.</td>
+                </tr>
+                <tr>
+                    <td>24. Какой этап лазерной печати подготавливает фотобарабан?</td>
+                    <td id="user-answer-24"></td>
+                    <td>C</td>
+                    <td id="status-24"></td>
+                    <td>Зарядка подготавливает фотобарабан, создавая электростатический заряд.</td>
+                </tr>
+                <tr>
+                    <td>25. Почему медицинский спирт не подходит для очистки картриджей?</td>
+                    <td id="user-answer-25"></td>
+                    <td>C</td>
+                    <td id="status-25"></td>
+                    <td>Медицинский спирт содержит примеси, которые оставляют налет.</td>
+                </tr>
+            </table>
+            <button onclick="restartQuiz()">Пройти тест заново</button>
+        </div>
+    </div>
+
+    <script>
+        let currentQuestion = 1;
+        const totalQuestions = 25;
+        let answers = {};
+
+        function startQuiz() {
+            document.getElementById('quiz').style.display = 'block';
+            document.querySelector('button[onclick="startQuiz()"]').style.display = 'none';
+            showQuestion(currentQuestion);
+        }
+
+        function showQuestion(n) {
+            for (let i = 1; i <= totalQuestions; i++) {
+                document.getElementById(`question-${i}`).style.display = i === n ? 'block' : 'none';
+            }
+        }
+
+        function prevQuestion() {
+            if (currentQuestion > 1) {
+                saveAnswer();
+                currentQuestion--;
+                showQuestion(currentQuestion);
+            }
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < totalQuestions) {
+                saveAnswer();
+                currentQuestion++;
+                showQuestion(currentQuestion);
+            }
+        }
+
+        function saveAnswer() {
+            const selected = document.querySelector(`input[name="q${currentQuestion}"]:checked`);
+            if (selected) {
+                answers[currentQuestion] = selected.value;
+            }
+        }
+
+        function finishQuiz() {
+            saveAnswer();
+            document.getElementById('quiz').style.display = 'none';
+            document.getElementById('results').style.display = 'block';
+            displayResults();
+        }
+
+        function displayResults() {
+            for (let i = 1; i <= totalQuestions; i++) {
+                const userAnswer = answers[i] || 'Не отвечено';
+                const correctAnswer = document.querySelector(`#status-${i}`).previousElementSibling.textContent;
+                const status = userAnswer === correctAnswer ? 'Правильно' : 'Неправильно';
+                document.getElementById(`user-answer-${i}`).textContent = userAnswer;
+                document.getElementById(`status-${i}`).textContent = status;
+                document.getElementById(`status-${i}`).className = status === 'Правильно' ? 'correct' : 'incorrect';
+            }
+        }
+
+        function restartQuiz() {
+            currentQuestion = 1;
+            answers = {};
+            for (let i = 1; i <= totalQuestions; i++) {
+                const radios = document.querySelectorAll(`input[name="q${i}"]`);
+                radios.forEach(radio => radio.checked = false);
+                document.getElementById(`user-answer-${i}`).textContent = '';
+                document.getElementById(`status-${i}`).textContent = '';
+                document.getElementById(`status-${i}`).className = '';
+            }
+            document.getElementById('quiz').style.display = 'block';
+            document.getElementById('results').style.display = 'none';
+            showQuestion(currentQuestion);
+        }
+    </script>
+</body>
+</html>

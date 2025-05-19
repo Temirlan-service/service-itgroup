@@ -1,0 +1,502 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест по переустановке Windows</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+            text-align: center;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1, h2 {
+            color: #333;
+        }
+        .intro, .question, .results {
+            display: none;
+        }
+        .intro.active, .question.active, .results.active {
+            display: block;
+        }
+        .question label {
+            display: block;
+            margin: 10px 0;
+            font-size: 16px;
+        }
+        .buttons {
+            margin-top: 20px;
+            display: none;
+        }
+        .buttons.active {
+            display: block;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007BFF;
+            color: #fff;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        input[type="radio"] {
+            margin-right: 10px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .correct {
+            color: green;
+        }
+        .incorrect {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Вводная страница -->
+        <div class="intro active">
+            <h1>Тест по уроку</h1>
+            <p>Переустановка Windows и установка ПО, проверьте свои знания. Желаю удачи!</p>
+            <p>Не подсматривайте ответы в интернете, НАДЗИРАТЕЛЬ наблюдает!</p>
+            <button onclick="startTest()">Начать тест</button>
+        </div>
+
+        <!-- Вопросы -->
+        <div class="question" data-question="1">
+            <h2>1. Почему важно сохранить данные перед переустановкой Windows?</h2>
+            <label><input type="radio" name="q1" value="a"> Данные замедляют установку</label>
+            <label><input type="radio" name="q1" value="b"> Системный диск будет отформатирован</label>
+            <label><input type="radio" name="q1" value="c"> Данные нужны для активации</label>
+            <label><input type="radio" name="q1" value="d"> Это ускоряет установку</label>
+        </div>
+        <div class="question" data-question="2">
+            <h2>2. Какой минимальный объём флешки нужен для создания загрузочного носителя Windows?</h2>
+            <label><input type="radio" name="q2" value="a"> 4 ГБ</label>
+            <label><input type="radio" name="q2" value="b"> 8 ГБ</label>
+            <label><input type="radio" name="q2" value="c"> 16 ГБ</label>
+            <label><input type="radio" name="q2" value="d"> 32 ГБ</label>
+        </div>
+        <div class="question" data-question="3">
+            <h2>3. Как называется официальная программа Microsoft для создания загрузочного носителя?</h2>
+            <label><input type="radio" name="q3" value="a"> Rufus</label>
+            <label><input type="radio" name="q3" value="b"> Media Creation Tool</label>
+            <label><input type="radio" name="q3" value="c"> Driver Booster</label>
+            <label><input type="radio" name="q3" value="d"> Snappy Driver</label>
+        </div>
+        <div class="question" data-question="4">
+            <h2>4. Какой альтернативный инструмент можно использовать для создания загрузочного носителя?</h2>
+            <label><input type="radio" name="q4" value="a"> Notepad</label>
+            <label><input type="radio" name="q4" value="b"> Rufus</label>
+            <label><input type="radio" name="q4" value="c"> Paint</label>
+            <label><input type="radio" name="q4" value="d"> Word</label>
+        </div>
+        <div class="question" data-question="5">
+            <h2>5. Какую клавишу обычно нажимают для входа в BIOS/UEFI?</h2>
+            <label><input type="radio" name="q5" value="a"> Ctrl</label>
+            <label><input type="radio" name="q5" value="b"> F2</label>
+            <label><input type="radio" name="q5" value="c"> Alt</label>
+            <label><input type="radio" name="q5" value="d"> Shift</label>
+        </div>
+        <div class="question" data-question="6">
+            <h2>6. Что нужно сделать в BIOS/UEFI для загрузки с флешки?</h2>
+            <label><input type="radio" name="q6" value="a"> Отключить Wi-Fi</label>
+            <label><input type="radio" name="q6" value="b"> Поставить USB первым в списке загрузки</label>
+            <label><input type="radio" name="q6" value="c"> Изменить частоту процессора</label>
+            <label><input type="radio" name="q6" value="d"> Включить звук</label>
+        </div>
+        <div class="question" data-question="7">
+            <h2>7. Как сохранить изменения в BIOS/UEFI перед выходом?</h2>
+            <label><input type="radio" name="q7" value="a"> Нажать Esc</label>
+            <label><input type="radio" name="q7" value="b"> Нажать F10 и Enter</label>
+            <label><input type="radio" name="q7" value="c"> Выключить ПК</label>
+            <label><input type="radio" name="q7" value="d"> Нажать Ctrl+Alt+Del</label>
+        </div>
+        <div class="question" data-question="8">
+            <h2>8. Какой параметр выбирают первым при запуске установщика Windows?</h2>
+            <label><input type="radio" name="q8" value="a"> Имя пользователя</label>
+            <label><input type="radio" name="q8" value="b"> Язык</label>
+            <label><input type="radio" name="q8" value="c"> Пароль</label>
+            <label><input type="radio" name="q8" value="d"> Wi-Fi</label>
+        </div>
+        <div class="question" data-question="9">
+            <h2>9. Что можно сделать с ключом активации на этапе установки Windows?</h2>
+            <label><input type="radio" name="q9" value="a"> Изменить его</label>
+            <label><input type="radio" name="q9" value="b"> Пропустить</label>
+            <label><input type="radio" name="q9" value="c"> Удалить</label>
+            <label><input type="radio" name="q9" value="d"> Сохранить на флешку</label>
+        </div>
+        <div class="question" data-question="10">
+            <h2>10. Что произойдёт с данными на системном диске при чистой установке Windows?</h2>
+            <label><input type="radio" name="q10" value="a"> Они сохранятся</label>
+            <label><input type="radio" name="q10" value="b"> Они будут удалены</label>
+            <label><input type="radio" name="q10" value="c"> Они зашифруются</label>
+            <label><input type="radio" name="q10" value="d"> Они переместятся</label>
+        </div>
+        <div class="question" data-question="11">
+            <h2>11. Какой режим рекомендуется включить в BIOS для SSD?</h2>
+            <label><input type="radio" name="q11" value="a"> IDE</label>
+            <label><input type="radio" name="q11" value="b"> AHCI</label>
+            <label><input type="radio" name="q11" value="c"> RAID</label>
+            <label><input type="radio" name="q11" value="d"> SATA</label>
+        </div>
+        <div class="question" data-question="12">
+            <h2>12. Что делает установщик Windows при создании нового раздела диска?</h2>
+            <label><input type="radio" name="q12" value="a"> Удаляет все файлы</label>
+            <label><input type="radio" name="q12" value="b"> Создаёт нужные разделы автоматически</label>
+            <label><input type="radio" name="q12" value="c"> Форматирует флешку</label>
+            <label><input type="radio" name="q12" value="d"> Копирует драйверы</label>
+        </div>
+        <div class="question" data-question="13">
+            <h2>13. Какой шаг следует после выбора диска для установки Windows?</h2>
+            <label><input type="radio" name="q13" value="a"> Ввод имени пользователя</label>
+            <label><input type="radio" name="q13" value="b"> Копирование файлов</label>
+            <label><input type="radio" name="q13" value="c"> Настройка Wi-Fi</label>
+            <label><input type="radio" name="q13" value="d"> Установка драйверов</label>
+        </div>
+        <div class="question" data-question="14">
+            <h2>14. Что нужно ввести во время первоначальной настройки Windows?</h2>
+            <label><input type="radio" name="q14" value="a"> Ключ активации</label>
+            <label><input type="radio" name="q14" value="b"> Имя пользователя</label>
+            <label><input type="radio" name="q14" value="c"> Серийный номер ПК</label>
+            <label><input type="radio" name="q14" value="d"> IP-адрес</label>
+        </div>
+        <div class="question" data-question="15">
+            <h2>15. Какой параметр можно настроить после установки Windows?</h2>
+            <label><input type="radio" name="q15" value="a"> Частота процессора</label>
+            <label><input type="radio" name="q15" value="b"> Конфиденциальность</label>
+            <label><input type="radio" name="q15" value="c"> Размер диска</label>
+            <label><input type="radio" name="q15" value="d"> Тип BIOS</label>
+        </div>
+        <div class="question" data-question="16">
+            <h2>16. Как называется утилита для проверки устройств после установки Windows?</h2>
+            <label><input type="radio" name="q16" value="a"> Панель управления</label>
+            <label><input type="radio" name="q16" value="b"> Диспетчер устройств</label>
+            <label><input type="radio" name="q16" value="c"> Проводник</label>
+            <label><input type="radio" name="q16" value="d"> Командная строка</label>
+        </div>
+        <div class="question" data-question="17">
+            <h2>17. Какой знак в Диспетчере устройств указывает на отсутствие драйвера?</h2>
+            <label><input type="radio" name="q17" value="a"> Зелёный круг</label>
+            <label><input type="radio" name="q17" value="b"> Жёлтый восклицательный знак</label>
+            <label><input type="radio" name="q17" value="c"> Красный крест</label>
+            <label><input type="radio" name="q17" value="d"> Синий вопросительный знак</label>
+        </div>
+        <div class="question" data-question="18">
+            <h2>18. Какой драйвер нужно установить первым после переустановки Windows?</h2>
+            <label><input type="radio" name="q18" value="a"> Графический</label>
+            <label><input type="radio" name="q18" value="b"> Чипсет</label>
+            <label><input type="radio" name="q18" value="c"> Звуковой</label>
+            <label><input type="radio" name="q18" value="d"> Сетевой</label>
+        </div>
+        <div class="question" data-question="19">
+            <h2>19. Где лучше всего скачать драйверы для оборудования?</h2>
+            <label><input type="radio" name="q19" value="a"> Сторонние сайты</label>
+            <label><input type="radio" name="q19" value="b"> Официальные сайты производителей</label>
+            <label><input type="radio" name="q19" value="c"> Социальные сети</label>
+            <label><input type="radio" name="q19" value="d"> Торренты</label>
+        </div>
+        <div class="question" data-question="20">
+            <h2>20. Какая программа помогает автоматически устанавливать драйверы?</h2>
+            <label><input type="radio" name="q20" value="a"> Microsoft Word</label>
+            <label><input type="radio" name="q20" value="b"> Driver Booster</label>
+            <label><input type="radio" name="q20" value="c"> Adobe Photoshop</label>
+            <label><input type="radio" name="q20" value="d"> VLC Player</label>
+        </div>
+        <div class="question" data-question="21">
+            <h2>21. Какой драйвер отвечает за работу видеокарты?</h2>
+            <label><input type="radio" name="q21" value="a"> Realtek</label>
+            <label><input type="radio" name="q21" value="b"> NVIDIA</label>
+            <label><input type="radio" name="q21" value="c"> Intel Chipset</label>
+            <label><input type="radio" name="q21" value="d"> Broadcom</label>
+        </div>
+        <div class="question" data-question="22">
+            <h2>22. Для чего нужен драйвер сетевого адаптера?</h2>
+            <label><input type="radio" name="q22" value="a"> Для работы звука</label>
+            <label><input type="radio" name="q22" value="b"> Для подключения к интернету</label>
+            <label><input type="radio" name="q22" value="c"> Для разгона процессора</label>
+            <label><input type="radio" name="q22" value="d"> Для управления дисками</label>
+        </div>
+        <div class="question" data-question="23">
+            <h2>23. Какой производитель драйверов для звуковой карты наиболее распространён?</h2>
+            <label><input type="radio" name="q23" value="a"> NVIDIA</label>
+            <label><input type="radio" name="q23" value="b"> Realtek</label>
+            <label><input type="radio" name="q23" value="c"> AMD</label>
+            <label><input type="radio" name="q23" value="d"> Intel</label>
+        </div>
+        <div class="question" data-question="24">
+            <h2>24. Что может потребоваться для активации установленных программ?</h2>
+            <label><input type="radio" name="q24" value="a"> Обновление BIOS</label>
+            <label><input type="radio" name="q24" value="b"> Ключ активации</label>
+            <label><input type="radio" name="q24" value="c"> Новый SSD</label>
+            <label><input type="radio" name="q24" value="d"> Переустановка Windows</label>
+        </div>
+        <div class="question" data-question="25">
+            <h2>25. Какой этап установки Windows завершает процесс?</h2>
+            <label><input type="radio" name="q25" value="a"> Выбор языка</label>
+            <label><input type="radio" name="q25" value="b"> Копирование файлов</label>
+            <label><input type="radio" name="q25" value="c"> Загрузка рабочего стола</label>
+            <label><input type="radio" name="q25" value="d"> Установка драйверов</label>
+        </div>
+
+        <!-- Кнопки навигации -->
+        <div class="buttons">
+            <button onclick="prevQuestion()">Предыдущий вопрос</button>
+            <button onclick="nextQuestion()">Следующий вопрос</button>
+            <button onclick="finishTest()">Завершить тест</button>
+        </div>
+
+        <!-- Результаты -->
+        <div class="results">
+            <h2>Результаты теста</h2>
+            <p id="score"></p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Вопрос</th>
+                        <th>Ваш ответ</th>
+                        <th>Правильный ответ</th>
+                        <th>Статус</th>
+                        <th>Объяснение</th>
+                    </tr>
+                </thead>
+                <tbody id="resultsTable"></tbody>
+            </table>
+            <button onclick="restartTest()">Пройти тест заново</button>
+        </div>
+    </div>
+
+    <script>
+        let currentQuestion = 0;
+        const totalQuestions = 25;
+        const correctAnswers = {
+            q1: 'b', q2: 'b', q3: 'b', q4: 'b', q5: 'b',
+            q6: 'b', q7: 'b', q8: 'b', q9: 'b', q10: 'b',
+            q11: 'b', q12: 'b', q13: 'b', q14: 'b', q15: 'b',
+            q16: 'b', q17: 'b', q18: 'b', q19: 'b', q20: 'b',
+            q21: 'b', q22: 'b', q23: 'b', q24: 'b', q25: 'c'
+        };
+        const questionsText = {
+            q1: 'Почему важно сохранить данные перед переустановкой Windows?',
+            q2: 'Какой минимальный объём флешки нужен для создания загрузочного носителя Windows?',
+            q3: 'Как называется официальная программа Microsoft для создания загрузочного носителя?',
+            q4: 'Какой альтернативный инструмент можно использовать для создания загрузочного носителя?',
+            q5: 'Какую клавишу обычно нажимают для входа в BIOS/UEFI?',
+            q6: 'Что нужно сделать в BIOS/UEFI для загрузки с флешки?',
+            q7: 'Как сохранить изменения в BIOS/UEFI перед выходом?',
+            q8: 'Какой параметр выбирают первым при запуске установщика Windows?',
+            q9: 'Что можно сделать с ключом активации на этапе установки Windows?',
+            q10: 'Что произойдёт с данными на системном диске при чистой установке Windows?',
+            q11: 'Какой режим рекомендуется включить в BIOS для SSD?',
+            q12: 'Что делает установщик Windows при создании нового раздела диска?',
+            q13: 'Какой шаг следует после выбора диска для установки Windows?',
+            q14: 'Что нужно ввести во время первоначальной настройки Windows?',
+            q15: 'Какой параметр можно настроить после установки Windows?',
+            q16: 'Как называется утилита для проверки устройств после установки Windows?',
+            q17: 'Какой знак в Диспетчере устройств указывает на отсутствие драйвера?',
+            q18: 'Какой драйвер нужно установить первым после переустановки Windows?',
+            q19: 'Где лучше всего скачать драйверы для оборудования?',
+            q20: 'Какая программа помогает автоматически устанавливать драйверы?',
+            q21: 'Какой драйвер отвечает за работу видеокарты?',
+            q22: 'Для чего нужен драйвер сетевого адаптера?',
+            q23: 'Какой производитель драйверов для звуковой карты наиболее распространён?',
+            q24: 'Что может потребоваться для активации установленных программ?',
+            q25: 'Какой этап установки Windows завершает процесс?'
+        };
+        const optionsText = {
+            q1: { a: 'Данные замедляют установку', b: 'Системный диск будет отформатирован', c: 'Данные нужны для активации', d: 'Это ускоряет установку' },
+            q2: { a: '4 ГБ', b: '8 ГБ', c: '16 ГБ', d: '32 ГБ' },
+            q3: { a: 'Rufus', b: 'Media Creation Tool', c: 'Driver Booster', d: 'Snappy Driver' },
+            q4: { a: 'Notepad', b: 'Rufus', c: 'Paint', d: 'Word' },
+            q5: { a: 'Ctrl', b: 'F2', c: 'Alt', d: 'Shift' },
+            q6: { a: 'Отключить Wi-Fi', b: 'Поставить USB первым в списке загрузки', c: 'Изменить частоту процессора', d: 'Включить звук' },
+            q7: { a: 'Нажать Esc', b: 'Нажать F10 и Enter', c: 'Выключить ПК', d: 'Нажать Ctrl+Alt+Del' },
+            q8: { a: 'Имя пользователя', b: 'Язык', c: 'Пароль', d: 'Wi-Fi' },
+            q9: { a: 'Изменить его', b: 'Пропустить', c: 'Удалить', d: 'Сохранить на флешку' },
+            q10: { a: 'Они сохранятся', b: 'Они будут удалены', c: 'Они зашифруются', d: 'Они переместятся' },
+            q11: { a: 'IDE', b: 'AHCI', c: 'RAID', d: 'SATA' },
+            q12: { a: 'Удаляет все файлы', b: 'Создаёт нужные разделы автоматически', c: 'Форматирует флешку', d: 'Копирует драйверы' },
+            q13: { a: 'Ввод имени пользователя', b: 'Копирование файлов', c: 'Настройка Wi-Fi', d: 'Установка драйверов' },
+            q14: { a: 'Ключ активации', b: 'Имя пользователя', c: 'Серийный номер ПК', d: 'IP-адрес' },
+            q15: { a: 'Частота процессора', b: 'Конфиденциальность', c: 'Размер диска', d: 'Тип BIOS' },
+            q16: { a: 'Панель управления', b: 'Диспетчер устройств', c: 'Проводник', d: 'Командная строка' },
+            q17: { a: 'Зелёный круг', b: 'Жёлтый восклицательный знак', c: 'Красный крест', d: 'Синий вопросительный знак' },
+            q18: { a: 'Графический', b: 'Чипсет', c: 'Звуковой', d: 'Сетевой' },
+            q19: { a: 'Сторонние сайты', b: 'Официальные сайты производителей', c: 'Социальные сети', d: 'Торренты' },
+            q20: { a: 'Microsoft Word', b: 'Driver Booster', c: 'Adobe Photoshop', d: 'VLC Player' },
+            q21: { a: 'Realtek', b: 'NVIDIA', c: 'Intel Chipset', d: 'Broadcom' },
+            q22: { a: 'Для работы звука', b: 'Для подключения к интернету', c: 'Для разгона процессора', d: 'Для управления дисками' },
+            q23: { a: 'NVIDIA', b: 'Realtek', c: 'AMD', d: 'Intel' },
+            q24: { a: 'Обновление BIOS', b: 'Ключ активации', c: 'Новый SSD', d: 'Переустановка Windows' },
+            q25: { a: 'Выбор языка', b: 'Копирование файлов', c: 'Загрузка рабочего стола', d: 'Установка драйверов' }
+        };
+        const explanations = {
+            q1: 'Перед переустановкой Windows системный диск форматируется, поэтому данные будут удалены.',
+            q2: 'Для создания загрузочного носителя Windows требуется флешка объёмом не менее 8 ГБ.',
+            q3: 'Media Creation Tool — официальная программа Microsoft для создания загрузочного носителя.',
+            q4: 'Rufus — популярный альтернативный инструмент для создания загрузочных флешек.',
+            q5: 'Для входа в BIOS/UEFI обычно нажимают клавишу F2 (или F12, DEL).',
+            q6: 'В BIOS/UEFI нужно поставить USB-накопитель первым в списке загрузки.',
+            q7: 'Изменения в BIOS/UEFI сохраняются нажатием F10 и Enter.',
+            q8: 'Первым выбирают язык при запуске установщика Windows.',
+            q9: 'Ключ активации можно пропустить на этапе установки и ввести позже.',
+            q10: 'При чистой установке Windows данные на системном диске удаляются.',
+            q11: 'Режим AHCI рекомендуется для SSD, чтобы обеспечить максимальную скорость.',
+            q12: 'Установщик Windows автоматически создаёт нужные разделы при выборе нового раздела.',
+            q13: 'После выбора диска начинается копирование файлов Windows.',
+            q14: 'Во время первоначальной настройки вводят имя пользователя.',
+            q15: 'После установки Windows можно настроить параметры конфиденциальности.',
+            q16: 'Диспетчер устройств используется для проверки оборудования после установки Windows.',
+            q17: 'Жёлтый восклицательный знак в Диспетчере устройств указывает на отсутствие драйвера.',
+            q18: 'Драйвер чипсета нужно установить первым для корректной работы материнской платы.',
+            q19: 'Драйверы лучше скачивать с официальных сайтов производителей оборудования.',
+            q20: 'Driver Booster — программа для автоматической установки драйверов.',
+            q21: 'NVIDIA (или AMD, Intel) отвечает за драйверы видеокарты.',
+            q22: 'Драйвер сетевого адаптера нужен для подключения к интернету.',
+            q23: 'Realtek — наиболее распространённый производитель драйверов для звуковых карт.',
+            q24: 'Для активации программ может потребоваться ключ активации.',
+            q25: 'Установка Windows завершается загрузкой рабочего стола.'
+        };
+        const answers = {};
+
+        function startTest() {
+            document.querySelector('.intro').classList.remove('active');
+            currentQuestion = 1;
+            document.querySelector(`.question[data-question="${currentQuestion}"]`).classList.add('active');
+            document.querySelector('.buttons').classList.add('active');
+        }
+
+        function prevQuestion() {
+            if (currentQuestion > 1) {
+                document.querySelector(`.question[data-question="${currentQuestion}"]`).classList.remove('active');
+                currentQuestion--;
+                document.querySelector(`.question[data-question="${currentQuestion}"]`).classList.add('active');
+            }
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < totalQuestions) {
+                document.querySelector(`.question[data-question="${currentQuestion}"]`).classList.remove('active');
+                currentQuestion++;
+                document.querySelector(`.question[data-question="${currentQuestion}"]`).classList.add('active');
+            }
+        }
+
+        function finishTest() {
+            let score = 0;
+            for (let i = 1; i <= totalQuestions; i++) {
+                const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                if (selected) {
+                    answers[`q${i}`] = selected.value;
+                    if (selected.value === correctAnswers[`q${i}`]) {
+                        score++;
+                    }
+                }
+            }
+
+            document.querySelector(`.question[data-question="${currentQuestion}"]`).classList.remove('active');
+            document.querySelector('.buttons').classList.remove('active');
+            document.querySelector('.results').classList.add('active');
+            document.getElementById('score').innerText = `Вы набрали ${score} из ${totalQuestions} баллов!`;
+
+            const resultsTable = document.getElementById('resultsTable');
+            resultsTable.innerHTML = '';
+            for (let i = 1; i <= totalQuestions; i++) {
+                const row = document.createElement('tr');
+                const questionCell = document.createElement('td');
+                const userAnswerCell = document.createElement('td');
+                const correctAnswerCell = document.createElement('td');
+                const statusCell = document.createElement('td');
+                const explanationCell = document.createElement('td');
+
+                questionCell.innerText = questionsText[`q${i}`];
+                const userAnswer = answers[`q${i}`] || 'Не отвечено';
+                userAnswerCell.innerText = optionsText[`q${i}`][userAnswer] || 'Не отвечено';
+                correctAnswerCell.innerText = optionsText[`q${i}`][correctAnswers[`q${i}`]];
+                statusCell.innerText = userAnswer === correctAnswers[`q${i}`] ? 'Правильно' : 'Неправильно';
+                statusCell.className = userAnswer === correctAnswers[`q${i}`] ? 'correct' : 'incorrect';
+                explanationCell.innerText = explanations[`q${i}`];
+
+                row.appendChild(questionCell);
+                row.appendChild(userAnswerCell);
+                row.appendChild(correctAnswerCell);
+                row.appendChild(statusCell);
+                row.appendChild(explanationCell);
+                resultsTable.appendChild(row);
+            }
+        }
+
+        function restartTest() {
+            currentQuestion = 0;
+            document.querySelector('.results').classList.remove('active');
+            document.querySelector('.intro').classList.add('active');
+            document.querySelector('.buttons').classList.remove('active');
+            document.querySelectorAll('input[type="radio"]').forEach(input => input.checked = false);
+        }
+    </script>
+</body>
+</html>

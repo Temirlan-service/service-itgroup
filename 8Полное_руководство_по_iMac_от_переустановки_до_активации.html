@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест по руководству iMac</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; }
+        .quiz-container { max-width: 800px; margin: auto; }
+        .question { margin-bottom: 20px; }
+        .options label { display: block; margin: 10px 0; }
+        .buttons { margin-top: 20px; }
+        .result-table { margin-top: 20px; border-collapse: collapse; width: 100%; }
+        .result-table th, .result-table td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        .correct { color: green; }
+        .incorrect { color: red; }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <h1>Тест по уроку</h1>
+        <p>Руководство по iMac: проверьте свои знания. Желаю удачи!</p>
+        <p><strong>Не подсматривайте ответы в интернете, НАДЗИРАТЕЛЬ наблюдает!</strong></p>
+        <button onclick="startQuiz()">Начать тест</button>
+
+        <div id="quiz" style="display: none;">
+            <div class="question" id="question-1">
+                <h3>1. Почему важно создать резервную копию перед переустановкой macOS?</h3>
+                <div class="options">
+                    <label><input type="radio" name="q1" value="A"> A) Ускоряет установку</label>
+                    <label><input type="radio" name="q1" value="B"> B) Для активации macOS</label>
+                    <label><input type="radio" name="q1" value="C"> C) Данные будут удалены</label>
+                    <label><input type="radio" name="q1" value="D"> D) Замедляет систему</label>
+                </div>
+            </div>
+
+            <div class="question" id="question-2" style="display: none;">
+                <h3>2. Какую комбинацию клавиш используют для режима восстановления?</h3>
+                <div class="options">
+                    <label><input type="radio" name="q2" value="A"> A) Command + Shift</label>
+                    <label><input type="radio" name="q2" value="B"> B) Option + Command</label>
+                    <label><input type="radio" name="q2" value="C"> C) Control + Shift</label>
+                    <label><input type="radio" name="q2" value="D"> D) Command + R</label>
+                </div>
+            </div>
+
+            <div class="question" id="question-3" style="display: none;">
+                <h3>3. Какой формат выбрать для системного диска iMac?</h3>
+                <div class="options">
+                    <label><input type="radio" name="q3" value="A"> A) APFS</label>
+                    <label><input type="radio" name="q3" value="B"> B) NTFS</label>
+                    <label><input type="radio" name="q3" value="C"> C) FAT32</label>
+                    <label><input type="radio" name="q3" value="D"> D) HFS</label>
+                </div>
+            </div>
+
+            <div class="question" id="question-4" style="display: none;">
+                <h3>4. Какая macOS поддерживается iMac 2012 года?</h3>
+                <div class="options">
+                    <label><input type="radio" name="q4" value="A"> A) Ventura</label>
+                    <label><input type="radio" name="q4" value="B"> B) Monterey</label>
+                    <label><input type="radio" name="q4" value="C"> C) Big Sur</label>
+                    <label><input type="radio" name="q4" value="D"> D) Catalina</label>
+                </div>
+            </div>
+
+            <div class="question" id="question-5" style="display: none;">
+                <h3>5. Как проверить совместимость iMac с macOS?</h3>
+                <div class="options">
+                    <label><input type="radio" name="q5" value="A"> A) В Mac App Store</label>
+                    <label><input type="radio" name="q5" value="B"> B) В "Локаторе"</label>
+                    <label><input type="radio" name="q5" value="C"> C) В "Об этом Mac"</label>
+                    <label><input type="radio" name="q5" value="D"> D) В "Дисковой утилите"</label>
+                </div>
+            </div>
+
+            <div class="question" id="question-6" style="display: none;">
+                <h3>6. Что выбирают после языка при первой настройке iMac?</h3>
+                <div class="options">
+                    <label><input type="radio" name="q6" value="A"> A) Touch ID</label>
+                    <label><input type="radio" name="q6" value="B"> B) Apple ID</label>
+                    <label><input type="radio" name="q6" value="C"> C) Резервная копия</label>
+                    <label><input type="radio" name="q6" value="D"> D) Wi-Fi</label>
+                </div>
+            </div>
+
+            <div class="question" id="question-7" style="display: none;">
+                <h3>7. Что нужно для входа в учетную запись при активации iMac?</h3>
+                <div class="options">
+                    <label><input type="radio" name="q7" value="A"> A) Apple ID</label>
+                    <label><input type="radio" name="q7" value="B"> B) Пароль Wi-Fi</label>
+                    <label><input type="radio" name="q7" value="C"> C) Серийный номер</label>
+                    <label><input type="radio" name="q7" value="D"> D) Код Mac App Store</label>
+                </div>
+            </div>
+
+            <div class="question" id="question-8" style="display: none;">
+                <h3>8. Что вводят при двухфакторной аутентификации?</h3>
+                <div class="options">
+                    <label><input type="radio" name="q8" value="A"> A) Пароль iMac</label>
+                    <label><input type="radio" name="q8" value="B"> B) Wi-Fi ключ</label>
+                    <label><input type="radio" name="q8" value="C"> C) Код подтверждения</label>
+                    <label><input type="radio" name="q8" value="D"> D) Имя пользователя</label>
+                </div>
+            </div>
+
+            <div class="question" id="question-9" style="display: none;">
+                <h3>9. Как разблокировать iMac с активационной блокировкой?</h3>
+                <div class="options">
+                    <label><input type="radio" name="q9" value="A"> A) Очистить диск</label>
+                    <label><input type="radio" name="q9" value="B"> B) Переустановить macOS</label>
+                    <label><input type="radio" name="q9" value="C"> C) Отключить Wi-Fi</label>
+                    <label><input type="radio" name="q9" value="D"> D) Ввести Apple ID владельца</label>
+                </div>
+            </div>
+
+            <div class="question" id="question-10" style="display: none;">
+                <h3>10. Как обновить macOS на iMac?</h3>
+                <div class="options">
+                    <label><input type="radio" name="q10" value="A"> A) В "Дисковой утилите"</label>
+                    <label><input type="radio" name="q10" value="B"> B) В "Системных настройках"</label>
+                    <label><input type="radio" name="q10" value="C"> C) В Mac App Store</label>
+                    <label><input type="radio" name="q10" value="D"> D) В "Локаторе"</label>
+                </div>
+            </div>
+
+            <div class="question" id="question-11" style="display: none;">
+                <h3>11. Как начать загрузку приложения в Mac App Store?</h3>
+                <div class="options">
+                    <label><input type="radio" name="q11" value="A"> A) Перетащить в папку</label>
+                    <label><input type="radio" name="q11" value="B"> B) Ввести пароль</label>
+                    <label><input type="radio" name="q11" value="C"> C) Нажать "Загрузить"</label>
+                    <label><input type="radio" name="q11" value="D"> D) Перезагрузить iMac</label>
+                </div>
+            </div>
+
+            <div class="question" id="question-12" style="display: none;">
+                <h3>12. Как удалить приложение с iMac?</h3>
+                <div class="options">
+                    <label><input type="radio" name="q12" value="A"> A) Очистить диск</label>
+                    <label><input type="radio" name="q12" value="B"> B) Удалить в Mac App Store</label>
+                    <label><input type="radio" name="q12" value="C"> C) Переместить в корзину</label>
+                    <label><input type="radio" name="q12" value="D"> D) Отключить в настройках</label>
+                </div>
+            </div>
+
+            <div class="question" id="question-13" style="display: none;">
+                <h3>13. Что показывает использование процессора на iMac?</h3>
+                <div class="options">
+                    <label><input type="radio" name="q13" value="A"> A) Activity Monitor</label>
+                    <label><input type="radio" name="q13" value="B"> B) Time Machine</label>
+                    <label><input type="radio" name="q13" value="C"> C) Дисковая утилита</label>
+                    <label><input type="radio" name="q13" value="D"> D) Локатор</label>
+                </div>
+            </div>
+
+            <div class="question" id="question-14" style="display: none;">
+                <h3>14. Как освободить место на диске iMac?</h3>
+                <div class="options">
+                    <label><input type="radio" name="q14" value="A"> A) Включить FileVault</label>
+                    <label><input type="radio" name="q14" value="B"> B) Установить приложения</label>
+                    <label><input type="radio" name="q14" value="C"> C) Перезагрузить iMac</label>
+                    <label><input type="radio" name="q14" value="D"> D) Использовать "Хранилище"</label>
+                </div>
+            </div>
+
+            <div class="question" id="question-15" style="display: none;">
+                <h3>15. Как остановить автозапуск программ на iMac?</h3>
+                <div class="options">
+                    <label><input type="radio" name="q15" value="A"> A) В Mac App Store</label>
+                    <label><input type="radio" name="q15" value="B"> B) В "Пользователи и группы"</label>
+                    <label><input type="radio" name="q15" value="C"> C) В "Локаторе"</label>
+                    <label><input type="radio" name="q15" value="D"> D) В "Хранилище"</label>
+                </div>
+            </div>
+
+            <div class="question" id="question-16" style="display: none;">
+                <h3>16. Что защищает данные iMac шифрованием?</h3>
+                <div class="options">
+                    <label><input type="radio" name="q16" value="A"> A) Find My Mac</label>
+                    <label><input type="radio" name="q16" value="B"> B) Time Machine</label>
+                    <label><input type="radio" name="q16" value="C"> C) FileVault</label>
+                    <label><input type="radio" name="q16" value="D"> D) Touch ID</label>
+                </div>
+            </div>
+
+            <div class="question" id="question-17" style="display: none;">
+                <h3>17. Что требуется для работы Time Machine?</h3>
+                <div class="options">
+                    <label><input type="radio" name="q17" value="A"> A) Wi-Fi</label>
+                    <label><input type="radio" name="q17" value="B"> B) Apple ID</label>
+                    <label><input type="radio" name="q17" value="C"> C) Mac App Store</label>
+                    <label><input type="radio" name="q17" value="D"> D) Внешний диск</label>
+                </div>
+            </div>
+
+            <div class="question" id="question-18" style="display: none;">
+                <h3>18. Как включить защиту от кражи на iMac?</h3>
+                <div class="options">
+                    <label><input type="radio" name="q18" value="A"> A) В "Об этом Mac"</label>
+                    <label><input type="radio" name="q18" value="B"> B) В Mac App Store</label>
+                    <label><input type="radio" name="q18" value="C"> C) В "Локаторе"</label>
+                    <label><input type="radio" name="q18" value="D"> D) В "Хранилище"</label>
+                </div>
+            </div>
+
+            <div class="question" id="question-19" style="display: none;">
+                <h3>19. Какая macOS не работает на iMac 2015 года?</h3>
+                <div class="options">
+                    <label><input type="radio" name="q19" value="A"> A) Monterey</label>
+                    <label><input type="radio" name="q19" value="B"> B) Big Sur</label>
+                    <label><input type="radio" name="q19" value="C"> C) Catalina</label>
+                    <label><input type="radio" name="q19" value="D"> D) Ventura</label>
+                </div>
+            </div>
+
+            <div class="question" id="question-20" style="display: none;">
+                <h3>20. Что делать после выбора "Переустановить macOS"?</h3>
+                <div class="options">
+                    <label><input type="radio" name="q20" value="A"> A) Перезагрузить iMac</label>
+                    <label><input type="radio" name="q20" value="B"> B) Войти в Apple ID</label>
+                    <label><input type="radio" name="q20" value="C"> C) Очистить диск</label>
+                    <label><input type="radio" name="q20" value="D"> D) Следовать инструкциям</label>
+                </div>
+            </div>
+
+            <div class="question" id="question-21" style="display: none;">
+                <h3>21. Что может блокировать обновление macOS?</h3>
+                <div class="options">
+                    <label><input type="radio" name="q21" value="A"> A) Включенный FileVault</label>
+                    <label><input type="radio" name="q21" value="B"> B) Полный диск</label>
+                    <label><input type="radio" name="q21" value="C"> C) Touch ID</label>
+                    <label><input type="radio" name="q21" value="D"> D) Отсутствие Wi-Fi</label>
+                </div>
+            </div>
+
+            <div class="question" id="question-22" style="display: none;">
+                <h3>22. Что следует за входом в Apple ID при настройке?</h3>
+                <div class="options">
+                    <label><input type="radio" name="q22" value="A"> A) Выбор языка</label>
+                    <label><input type="radio" name="q22" value="B"> B) Очистка диска</label>
+                    <label><input type="radio" name="q22" value="C"> C) Настройка Touch ID</label>
+                    <label><input type="radio" name="q22" value="D"> D) Подключение Wi-Fi</label>
+                </div>
+            </div>
+
+            <div class="question" id="question-23" style="display: none;">
+                <h3>23. Какой инструмент помогает найти потерянный iMac?</h3>
+                <div class="options">
+                    <label><input type="radio" name="q23" value="A"> A) FileVault</label>
+                    <label><input type="radio" name="q23" value="B"> B) Time Machine</label>
+                    <label><input type="radio" name="q23" value="C"> C) Activity Monitor</label>
+                    <label><input type="radio" name="q23" value="D"> D) Find My Mac</label>
+                </div>
+            </div>
+
+            <div class="question" id="question-24" style="display: none;">
+                <h3>24. Какая macOS совместима с iMac 2017 года?</h3>
+                <div class="options">
+                    <label><input type="radio" name="q24" value="A"> A) Ventura</label>
+                    <label><input type="radio" name="q24" value="B"> B) Catalina</label>
+                    <label><input type="radio" name="q24" value="C"> C) Big Sur</label>
+                    <label><input type="radio" name="q24" value="D"> D) Monterey</label>
+                </div>
+            </div>
+
+            <div class="question" id="question-25" style="display: none;">
+                <h3>25. Что завершает активацию iMac?</h3>
+                <div class="options">
+                    <label><input type="radio" name="q25" value="A"> A) Условия Apple</label>
+                    <label><input type="radio" name="q25" value="B"> B) Код Mac App Store</label>
+                    <label><input type="radio" name="q25" value="C"> C) Пароль Wi-Fi</label>
+                    <label><input type="radio" name="q25" value="D"> D) Имя пользователя</label>
+                </div>
+            </div>
+
+            <div class="buttons">
+                <button onclick="prevQuestion()">Предыдущий вопрос</button>
+                <button onclick="nextQuestion()">Следующий вопрос</button>
+                <button onclick="finishQuiz()">Завершить тест</button>
+            </div>
+        </div>
+
+        <div id="results" style="display: none;">
+            <h2>Результаты теста</h2>
+            <table class="result-table">
+                <tr>
+                    <th>Вопрос</th>
+                    <th>Ваш ответ</th>
+                    <th>Правильный ответ</th>
+                    <th>Статус</th>
+                    <th>Объяснение</th>
+                </tr>
+                <tr>
+                    <td>1. Почему важно создать резервную копию перед переустановкой macOS?</td>
+                    <td id="user-answer-1"></td>
+                    <td>C</td>
+                    <td id="status-1"></td>
+                    <td>Переустановка macOS форматирует диск, удаляя все данные.</td>
+                </tr>
+                <tr>
+                    <td>2. Какую комбинацию клавиш используют для режима восстановления?</td>
+                    <td id="user-answer-2"></td>
+                    <td>D</td>
+                    <td id="status-2"></td>
+                    <td>Command + R открывает режим восстановления.</td>
+                </tr>
+                <tr>
+                    <td>3. Какой формат выбрать для системного диска iMac?</td>
+                    <td id="user-answer-3"></td>
+                    <td>A</td>
+                    <td id="status-3"></td>
+                    <td>APFS оптимизирован для современных iMac.</td>
+                </tr>
+                <tr>
+                    <td>4. Какая macOS поддерживается iMac 2012 года?</td>
+                    <td id="user-answer-4"></td>
+                    <td>D</td>
+                    <td id="status-4"></td>
+                    <td>iMac 2012 года поддерживает macOS Catalina.</td>
+                </tr>
+                <tr>
+                    <td>5. Как проверить совместимость iMac с macOS?</td>
+                    <td id="user-answer-5"></td>
+                    <td>C</td>
+                    <td id="status-5"></td>
+                    <td>Модель и год в "Об этом Mac" показывают совместимость.</td>
+                </tr>
+                <tr>
+                    <td>6. Что выбирают после языка при первой настройке iMac?</td>
+                    <td id="user-answer-6"></td>
+                    <td>D</td>
+                    <td id="status-6"></td>
+                    <td>После языка выбирают Wi-Fi.</td>
+                </tr>
+                <tr>
+                    <td>7. Что нужно для входа в учетную запись при активации iMac?</td>
+                    <td id="user-answer-7"></td>
+                    <td>A</td>
+                    <td id="status-7"></td>
+                    <td>Apple ID необходим для активации.</td>
+                </tr>
+                <tr>
+                    <td>8. Что вводят при двухфакторной аутентификации?</td>
+                    <td id="user-answer-8"></td>
+                    <td>C</td>
+                    <td id="status-8"></td>
+                    <td>Код подтверждения требуется для двухфакторной аутентификации.</td>
+                </tr>
+                <tr>
+                    <td>9. Как разблокировать iMac с активационной блокировкой?</td>
+                    <td id="user-answer-9"></td>
+                    <td>D</td>
+                    <td id="status-9"></td>
+                    <td>Нужен Apple ID предыдущего владельца.</td>
+                </tr>
+                <tr>
+                    <td>10. Как обновить macOS на iMac?</td>
+                    <td id="user-answer-10"></td>
+                    <td>B</td>
+                    <td id="status-10"></td>
+                    <td>Обновления доступны в "Системных настройках" → "Обновление ПО".</td>
+                </tr>
+                <tr>
+                    <td>11. Как начать загрузку приложения в Mac App Store?</td>
+                    <td id="user-answer-11"></td>
+                    <td>C</td>
+                    <td id="status-11"></td>
+                    <td>Нажатие "Загрузить" начинает установку.</td>
+                </tr>
+                <tr>
+                    <td>12. Как удалить приложение с iMac?</td>
+                    <td id="user-answer-12"></td>
+                    <td>C</td>
+                    <td id="status-12"></td>
+                    <td>Приложение перемещают в корзину и очищают её.</td>
+                </tr>
+                <tr>
+                    <td>13. Что показывает использование процессора на iMac?</td>
+                    <td id="user-answer-13"></td>
+                    <td>A</td>
+                    <td id="status-13"></td>
+                    <td>Activity Monitor отслеживает нагрузку процессора.</td>
+                </tr>
+                <tr>
+                    <td>14. Как освободить место на диске iMac?</td>
+                    <td id="user-answer-14"></td>
+                    <td>D</td>
+                    <td id="status-14"></td>
+                    <td>Раздел "Хранилище" в "Об этом Mac" помогает освободить место.</td>
+                </tr>
+                <tr>
+                    <td>15. Как остановить автозапуск программ на iMac?</td>
+                    <td id="user-answer-15"></td>
+                    <td>B</td>
+                    <td id="status-15"></td>
+                    <td>Автозапуск отключают в "Пользователи и группы".</td>
+                </tr>
+                <tr>
+                    <td>16. Что защищает данные iMac шифрованием?</td>
+                    <td id="user-answer-16"></td>
+                    <td>C</td>
+                    <td id="status-16"></td>
+                    <td>FileVault шифрует данные.</td>
+                </tr>
+                <tr>
+                    <td>17. Что требуется для работы Time Machine?</td>
+                    <td id="user-answer-17"></td>
+                    <td>D</td>
+                    <td id="status-17"></td>
+                    <td>Time Machine требует внешний диск.</td>
+                </tr>
+                <tr>
+                    <td>18. Как включить защиту от кражи на iMac?</td>
+                    <td id="user-answer-18"></td>
+                    <td>C</td>
+                    <td id="status-18"></td>
+                    <td>Find My Mac активируется в "Локаторе".</td>
+                </tr>
+                <tr>
+                    <td>19. Какая macOS не работает на iMac 2015 года?</td>
+                    <td id="user-answer-19"></td>
+                    <td>D</td>
+                    <td id="status-19"></td>
+                    <td>Ventura не поддерживается iMac 2015 года.</td>
+                </tr>
+                <tr>
+                    <td>20. Что делать после выбора "Переустановить macOS"?</td>
+                    <td id="user-answer-20"></td>
+                    <td>D</td>
+                    <td id="status-20"></td>
+                    <td>Следуйте инструкциям на экране.</td>
+                </tr>
+                <tr>
+                    <td>21. Что может блокировать обновление macOS?</td>
+                    <td id="user-answer-21"></td>
+                    <td>D</td>
+                    <td id="status-21"></td>
+                    <td>Отсутствие Wi-Fi препятствует обновлению.</td>
+                </tr>
+                <tr>
+                    <td>22. Что следует за входом в Apple ID при настройке?</td>
+                    <td id="user-answer-22"></td>
+                    <td>C</td>
+                    <td id="status-22"></td>
+                    <td>После Apple ID настраивают Touch ID.</td>
+                </tr>
+                <tr>
+                    <td>23. Какой инструмент помогает найти потерянный iMac?</td>
+                    <td id="user-answer-23"></td>
+                    <td>D</td>
+                    <td id="status-23"></td>
+                    <td>Find My Mac помогает найти устройство.</td>
+                </tr>
+                <tr>
+                    <td>24. Какая macOS совместима с iMac 2017 года?</td>
+                    <td id="user-answer-24"></td>
+                    <td>A</td>
+                    <td id="status-24"></td>
+                    <td>iMac 2017 года поддерживает Ventura.</td>
+                </tr>
+                <tr>
+                    <td>25. Что завершает активацию iMac?</td>
+                    <td id="user-answer-25"></td>
+                    <td>A</td>
+                    <td id="status-25"></td>
+                    <td>Подтверждение условий Apple завершает активацию.</td>
+                </tr>
+            </table>
+            <button onclick="restartQuiz()">Пройти тест заново</button>
+        </div>
+    </div>
+
+    <script>
+        let currentQuestion = 1;
+        const totalQuestions = 25;
+        let answers = {};
+
+        function startQuiz() {
+            document.getElementById('quiz').style.display = 'block';
+            document.querySelector('button[onclick="startQuiz()"]').style.display = 'none';
+            showQuestion(currentQuestion);
+        }
+
+        function showQuestion(n) {
+            for (let i = 1; i <= totalQuestions; i++) {
+                document.getElementById(`question-${i}`).style.display = i === n ? 'block' : 'none';
+            }
+        }
+
+        function prevQuestion() {
+            if (currentQuestion > 1) {
+                saveAnswer();
+                currentQuestion--;
+                showQuestion(currentQuestion);
+            }
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < totalQuestions) {
+                saveAnswer();
+                currentQuestion++;
+                showQuestion(currentQuestion);
+            }
+        }
+
+        function saveAnswer() {
+            const selected = document.querySelector(`input[name="q${currentQuestion}"]:checked`);
+            if (selected) {
+                answers[currentQuestion] = selected.value;
+            }
+        }
+
+        function finishQuiz() {
+            saveAnswer();
+            document.getElementById('quiz').style.display = 'none';
+            document.getElementById('results').style.display = 'block';
+            displayResults();
+        }
+
+        function displayResults() {
+            for (let i = 1; i <= totalQuestions; i++) {
+                const userAnswer = answers[i] || 'Не отвечено';
+                const correctAnswer = document.querySelector(`#status-${i}`).previousElementSibling.textContent;
+                const status = userAnswer === correctAnswer ? 'Правильно' : 'Неправильно';
+                document.getElementById(`user-answer-${i}`).textContent = userAnswer;
+                document.getElementById(`status-${i}`).textContent = status;
+                document.getElementById(`status-${i}`).className = status === 'Правильно' ? 'correct' : 'incorrect';
+            }
+        }
+
+        function restartQuiz() {
+            currentQuestion = 1;
+            answers = {};
+            for (let i = 1; i <= totalQuestions; i++) {
+                const radios = document.querySelectorAll(`input[name="q${i}"]`);
+                radios.forEach(radio => radio.checked = false);
+                document.getElementById(`user-answer-${i}`).textContent = '';
+                document.getElementById(`status-${i}`).textContent = '';
+                document.getElementById(`status-${i}`).className = '';
+            }
+            document.getElementById('quiz').style.display = 'block';
+            document.getElementById('results').style.display = 'none';
+            showQuestion(currentQuestion);
+        }
+    </script>
+</body>
+</html>

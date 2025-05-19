@@ -1,0 +1,502 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест по флеш-накопителям</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+            text-align: center;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1, h2 {
+            color: #333;
+        }
+        .intro, .question, .results {
+            display: none;
+        }
+        .intro.active, .question.active, .results.active {
+            display: block;
+        }
+        .question label {
+            display: block;
+            margin: 10px 0;
+            font-size: 16px;
+        }
+        .buttons {
+            margin-top: 20px;
+            display: none;
+        }
+        .buttons.active {
+            display: block;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007BFF;
+            color: #fff;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        input[type="radio"] {
+            margin-right: 10px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .correct {
+            color: green;
+        }
+        .incorrect {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Вводная страница -->
+        <div class="intro active">
+            <h1>Тест по уроку</h1>
+            <p>Флеш-накопители: устройство, использование и безопасность, проверьте свои знания. Желаю удачи!</p>
+            <p>Не подсматривайте ответы в интернете, НАДЗИРАТЕЛЬ наблюдает!</p>
+            <button onclick="startTest()">Начать тест</button>
+        </div>
+
+        <!-- Вопросы -->
+        <div class="question" data-question="1">
+            <h2>1. Какой тип памяти используется в USB-флешках для хранения данных?</h2>
+            <label><input type="radio" name="q1" value="a"> Магнитная память</label>
+            <label><input type="radio" name="q1" value="b"> Флеш-память</label>
+            <label><input type="radio" name="q1" value="c"> Оперативная память</label>
+            <label><input type="radio" name="q1" value="d"> Кэш-память</label>
+        </div>
+        <div class="question" data-question="2">
+            <h2>2. Кто представил первую коммерческую USB-флешку в 2000 году?</h2>
+            <label><input type="radio" name="q2" value="a"> Kingston</label>
+            <label><input type="radio" name="q2" value="b"> IBM</label>
+            <label><input type="radio" name="q2" value="c"> SanDisk</label>
+            <label><input type="radio" name="q2" value="d"> Samsung</label>
+        </div>
+        <div class="question" data-question="3">
+            <h2>3. Какой компонент флешки управляет процессами чтения и записи?</h2>
+            <label><input type="radio" name="q3" value="a"> Разъём USB</label>
+            <label><input type="radio" name="q3" value="b"> Контроллер</label>
+            <label><input type="radio" name="q3" value="c"> Печатная плата</label>
+            <label><input type="radio" name="q3" value="d"> Флеш-память</label>
+        </div>
+        <div class="question" data-question="4">
+            <h2>4. Какой тип флеш-памяти хранит 1 бит в ячейке и имеет высокую долговечность?</h2>
+            <label><input type="radio" name="q4" value="a"> MLC</label>
+            <label><input type="radio" name="q4" value="b"> TLC</label>
+            <label><input type="radio" name="q4" value="c"> SLC</label>
+            <label><input type="radio" name="q4" value="d"> QLC</label>
+        </div>
+        <div class="question" data-question="5">
+            <h2>5. Какой тип флеш-памяти является самым дешёвым, но наименее надёжным?</h2>
+            <label><input type="radio" name="q5" value="a"> SLC</label>
+            <label><input type="radio" name="q5" value="b"> MLC</label>
+            <label><input type="radio" name="q5" value="c"> TLC</label>
+            <label><input type="radio" name="q5" value="d"> QLC</label>
+        </div>
+        <div class="question" data-question="6">
+            <h2>6. Какая версия USB обеспечивает скорость до 40 Гбит/с?</h2>
+            <label><input type="radio" name="q6" value="a"> USB 2.0</label>
+            <label><input type="radio" name="q6" value="b"> USB 3.0</label>
+            <label><input type="radio" name="q6" value="c"> USB 3.2</label>
+            <label><input type="radio" name="q6" value="d"> USB 4.0</label>
+        </div>
+        <div class="question" data-question="7">
+            <h2>7. Какой объём памяти флешки подходит для хранения больших файлов?</h2>
+            <label><input type="radio" name="q7" value="a"> 2 ГБ</label>
+            <label><input type="radio" name="q7" value="b"> 16 ГБ</label>
+            <label><input type="radio" name="q7" value="c"> 32 ГБ</label>
+            <label><input type="radio" name="q7" value="d"> 128 ГБ</label>
+        </div>
+        <div class="question" data-question="8">
+            <h2>8. Какая файловая система поддерживает файлы больше 4 ГБ и совместима с Windows и macOS?</h2>
+            <label><input type="radio" name="q8" value="a"> FAT32</label>
+            <label><input type="radio" name="q8" value="b"> exFAT</label>
+            <label><input type="radio" name="q8" value="c"> NTFS</label>
+            <label><input type="radio" name="q8" value="d"> APFS</label>
+        </div>
+        <div class="question" data-question="9">
+            <h2>9. Какой тип флешек имеет защиту от воды и ударов?</h2>
+            <label><input type="radio" name="q9" value="a"> Обычные</label>
+            <label><input type="radio" name="q9" value="b"> Мини-флешки</label>
+            <label><input type="radio" name="q9" value="c"> Защищённые</label>
+            <label><input type="radio" name="q9" value="d"> Комбинированные</label>
+        </div>
+        <div class="question" data-question="10">
+            <h2>10. Сколько циклов записи выдерживает флеш-память типа TLC?</h2>
+            <label><input type="radio" name="q10" value="a"> 1 000</label>
+            <label><input type="radio" name="q10" value="b"> 3 000</label>
+            <label><input type="radio" name="q10" value="c"> 10 000</label>
+            <label><input type="radio" name="q10" value="d"> 100 000</label>
+        </div>
+        <div class="question" data-question="11">
+            <h2>11. Что продлевает срок службы флешки благодаря равномерному распределению нагрузки?</h2>
+            <label><input type="radio" name="q11" value="a"> Аппаратное шифрование</label>
+            <label><input type="radio" name="q11" value="b"> Wear Leveling</label>
+            <label><input type="radio" name="q11" value="c"> Резервное копирование</label>
+            <label><input type="radio" name="q11" value="d"> Автозапуск</label>
+        </div>
+        <div class="question" data-question="12">
+            <h2>12. Как называется переключатель на флешке, защищающий данные от записи?</h2>
+            <label><input type="radio" name="q12" value="a"> Write-Protect</label>
+            <label><input type="radio" name="q12" value="b"> Read-Only</label>
+            <label><input type="radio" name="q12" value="c"> Lock-Switch</label>
+            <label><input type="radio" name="q12" value="d"> Data-Guard</label>
+        </div>
+        <div class="question" data-question="13">
+            <h2>13. Для чего используются беспроводные флешки?</h2>
+            <label><input type="radio" name="q13" value="a"> Для установки операционных систем</label>
+            <label><input type="radio" name="q13" value="b"> Для передачи данных без проводов</label>
+            <label><input type="radio" name="q13" value="c"> Для защиты от вибраций</label>
+            <label><input type="radio" name="q13" value="d"> Для резервного питания</label>
+        </div>
+        <div class="question" data-question="14">
+            <h2>14. В какой области применяются промышленные флешки с повышенной защитой?</h2>
+            <label><input type="radio" name="q14" value="a"> Офисные задачи</label>
+            <label><input type="radio" name="q14" value="b"> Медицинское оборудование</label>
+            <label><input type="radio" name="q14" value="c"> Домашние ПК</label>
+            <label><input type="radio" name="q14" value="d"> Игровые консоли</label>
+        </div>
+        <div class="question" data-question="15">
+            <h2>15. По какому параметру флешки превосходят HDD в портативности?</h2>
+            <label><input type="radio" name="q15" value="a"> Скорость</label>
+            <label><input type="radio" name="q15" value="b"> Надёжность</label>
+            <label><input type="radio" name="q15" value="c"> Компактность</label>
+            <label><input type="radio" name="q15" value="d"> Цена за ГБ</label>
+        </div>
+        <div class="question" data-question="16">
+            <h2>16. Какой риск связан с подключением флешки к неизвестному ПК?</h2>
+            <label><input type="radio" name="q16" value="a"> Перегрев флешки</label>
+            <label><input type="radio" name="q16" value="b"> Заражение вирусами</label>
+            <label><input type="radio" name="q16" value="c"> Потеря скорости</label>
+            <label><input type="radio" name="q16" value="d"> Повреждение разъёма</label>
+        </div>
+        <div class="question" data-question="17">
+            <h2>17. Какой инструмент можно использовать для шифрования данных на флешке?</h2>
+            <label><input type="radio" name="q17" value="a"> Recuva</label>
+            <label><input type="radio" name="q17" value="b"> VeraCrypt</label>
+            <label><input type="radio" name="q17" value="c"> TestDisk</label>
+            <label><input type="radio" name="q17" value="d"> Notepad</label>
+        </div>
+        <div class="question" data-question="18">
+            <h2>18. Какая неисправность флешки чаще всего встречается?</h2>
+            <label><input type="radio" name="q18" value="a"> Сбой контроллера</label>
+            <label><input type="radio" name="q18" value="b"> Физическое повреждение разъёма</label>
+            <label><input type="radio" name="q18" value="c"> Износ ячеек памяти</label>
+            <label><input type="radio" name="q18" value="d"> Ошибки файловой системы</label>
+        </div>
+        <div class="question" data-question="19">
+            <h2>19. Что может вызвать ошибки файловой системы на флешке?</h2>
+            <label><input type="radio" name="q19" value="a"> Использование USB 3.0</label>
+            <label><input type="radio" name="q19" value="b"> Неправильное извлечение</label>
+            <label><input type="radio" name="q19" value="c"> Аппаратное шифрование</label>
+            <label><input type="radio" name="q19" value="d"> Высокая температура</label>
+        </div>
+        <div class="question" data-question="20">
+            <h2>20. Какой инструмент помогает восстановить данные с повреждённой флешки?</h2>
+            <label><input type="radio" name="q20" value="a"> BitLocker</label>
+            <label><input type="radio" name="q20" value="b"> Recuva</label>
+            <label><input type="radio" name="q20" value="c"> VeraCrypt</label>
+            <label><input type="radio" name="q20" value="d"> Paint</label>
+        </div>
+        <div class="question" data-question="21">
+            <h2>21. Для чего используются загрузочные флешки?</h2>
+            <label><input type="radio" name="q21" value="a"> Хранения документов</label>
+            <label><input type="radio" name="q21" value="b"> Установки операционных систем</label>
+            <label><input type="radio" name="q21" value="c"> Передачи данных по Wi-Fi</label>
+            <label><input type="radio" name="q21" value="d"> Защиты от вирусов</label>
+        </div>
+        <div class="question" data-question="22">
+            <h2>22. Какой бренд флешек считается надёжным?</h2>
+            <label><input type="radio" name="q22" value="a"> Lenovo</label>
+            <label><input type="radio" name="q22" value="b"> SanDisk</label>
+            <label><input type="radio" name="q22" value="c"> Acer</label>
+            <label><input type="radio" name="q22" value="d"> HP</label>
+        </div>
+        <div class="question" data-question="23">
+            <h2>23. Как можно защитить флешку от механических повреждений?</h2>
+            <label><input type="radio" name="q23" value="a"> Использовать шифрование</label>
+            <label><input type="radio" name="q23" value="b"> Использовать металлический корпус</label>
+            <label><input type="radio" name="q23" value="c"> Форматировать в NTFS</label>
+            <label><input type="radio" name="q23" value="d"> Проверять на вирусы</label>
+        </div>
+        <div class="question" data-question="24">
+            <h2>24. Почему нельзя извлекать флешку во время передачи данных?</h2>
+            <label><input type="radio" name="q24" value="a"> Это замедляет передачу</label>
+            <label><input type="radio" name="q24" value="b"> Это повреждает файлы</label>
+            <label><input type="radio" name="q24" value="c"> Это снижает надёжность</label>
+            <label><input type="radio" name="q24" value="d"> Это перегревает флешку</label>
+        </div>
+        <div class="question" data-question="25">
+            <h2>25. Что рекомендуется для хранения конфиденциальных данных на флешке?</h2>
+            <label><input type="radio" name="q25" value="a"> Форматирование в FAT32</label>
+            <label><input type="radio" name="q25" value="b"> Использование паролей и шифрования</label>
+            <label><input type="radio" name="q25" value="c"> Хранение в тёплом месте</label>
+            <label><input type="radio" name="q25" value="d"> Использование USB 2.0</label>
+        </div>
+
+        <!-- Кнопки навигации -->
+        <div class="buttons">
+            <button onclick="prevQuestion()">Предыдущий вопрос</button>
+            <button onclick="nextQuestion()">Следующий вопрос</button>
+            <button onclick="finishTest()">Завершить тест</button>
+        </div>
+
+        <!-- Результаты -->
+        <div class="results">
+            <h2>Результаты теста</h2>
+            <p id="score"></p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Вопрос</th>
+                        <th>Ваш ответ</th>
+                        <th>Правильный ответ</th>
+                        <th>Статус</th>
+                        <th>Объяснение</th>
+                    </tr>
+                </thead>
+                <tbody id="resultsTable"></tbody>
+            </table>
+            <button onclick="restartTest()">Пройти тест заново</button>
+        </div>
+    </div>
+
+    <script>
+        let currentQuestion = 0;
+        const totalQuestions = 25;
+        const correctAnswers = {
+            q1: 'b', q2: 'b', q3: 'b', q4: 'c', q5: 'd',
+            q6: 'd', q7: 'd', q8: 'b', q9: 'c', q10: 'b',
+            q11: 'b', q12: 'b', q13: 'b', q14: 'b', q15: 'c',
+            q16: 'b', q17: 'b', q18: 'b', q19: 'b', q20: 'b',
+            q21: 'b', q22: 'b', q23: 'b', q24: 'b', q25: 'b'
+        };
+        const questionsText = {
+            q1: 'Какой тип памяти используется в USB-флешках для хранения данных?',
+            q2: 'Кто представил первую коммерческую USB-флешку в 2000 году?',
+            q3: 'Какой компонент флешки управляет процессами чтения и записи?',
+            q4: 'Какой тип флеш-памяти хранит 1 бит в ячейке и имеет высокую долговечность?',
+            q5: 'Какой тип флеш-памяти является самым дешёвым, но наименее надёжным?',
+            q6: 'Какая версия USB обеспечивает скорость до 40 Гбит/с?',
+            q7: 'Какой объём памяти флешки подходит для хранения больших файлов?',
+            q8: 'Какая файловая система поддерживает файлы больше 4 ГБ и совместима с Windows и macOS?',
+            q9: 'Какой тип флешек имеет защиту от воды и ударов?',
+            q10: 'Сколько циклов записи выдерживает флеш-память типа TLC?',
+            q11: 'Что продлевает срок службы флешки благодаря равномерному распределению нагрузки?',
+            q12: 'Как называется переключатель на флешке, защищающий данные от записи?',
+            q13: 'Для чего используются беспроводные флешки?',
+            q14: 'В какой области применяются промышленные флешки с повышенной защитой?',
+            q15: 'По какому параметру флешки превосходят HDD в портативности?',
+            q16: 'Какой риск связан с подключением флешки к неизвестному ПК?',
+            q17: 'Какой инструмент можно использовать для шифрования данных на флешке?',
+            q18: 'Какая неисправность флешки чаще всего встречается?',
+            q19: 'Что может вызвать ошибки файловой системы на флешке?',
+            q20: 'Какой инструмент помогает восстановить данные с повреждённой флешки?',
+            q21: 'Для чего используются загрузочные флешки?',
+            q22: 'Какой бренд флешек считается надёжным?',
+            q23: 'Как можно защитить флешку от механических повреждений?',
+            q24: 'Почему нельзя извлекать флешку во время передачи данных?',
+            q25: 'Что рекомендуется для хранения конфиденциальных данных на флешке?'
+        };
+        const optionsText = {
+            q1: { a: 'Магнитная память', b: 'Флеш-память', c: 'Оперативная память', d: 'Кэш-память' },
+            q2: { a: 'Kingston', b: 'IBM', c: 'SanDisk', d: 'Samsung' },
+            q3: { a: 'Разъём USB', b: 'Контроллер', c: 'Печатная плата', d: 'Флеш-память' },
+            q4: { a: 'MLC', b: 'TLC', c: 'SLC', d: 'QLC' },
+            q5: { a: 'SLC', b: 'MLC', c: 'TLC', d: 'QLC' },
+            q6: { a: 'USB 2.0', b: 'USB 3.0', c: 'USB 3.2', d: 'USB 4.0' },
+            q7: { a: '2 ГБ', b: '16 ГБ', c: '32 ГБ', d: '128 ГБ' },
+            q8: { a: 'FAT32', b: 'exFAT', c: 'NTFS', d: 'APFS' },
+            q9: { a: 'Обычные', b: 'Мини-флешки', c: 'Защищённые', d: 'Комбинированные' },
+            q10: { a: '1 000', b: '3 000', c: '10 000', d: '100 000' },
+            q11: { a: 'Аппаратное шифрование', b: 'Wear Leveling', c: 'Резервное копирование', d: 'Автозапуск' },
+            q12: { a: 'Write-Protect', b: 'Read-Only', c: 'Lock-Switch', d: 'Data-Guard' },
+            q13: { a: 'Для установки операционных систем', b: 'Для передачи данных без проводов', c: 'Для защиты от вибраций', d: 'Для резервного питания' },
+            q14: { a: 'Офисные задачи', b: 'Медицинское оборудование', c: 'Домашние ПК', d: 'Игровые консоли' },
+            q15: { a: 'Скорость', b: 'Надёжность', c: 'Компактность', d: 'Цена за ГБ' },
+            q16: { a: 'Перегрев флешки', b: 'Заражение вирусами', c: 'Потеря скорости', d: 'Повреждение разъёма' },
+            q17: { a: 'Recuva', b: 'VeraCrypt', c: 'TestDisk', d: 'Notepad' },
+            q18: { a: 'Сбой контроллера', b: 'Физическое повреждение разъёма', c: 'Износ ячеек памяти', d: 'Ошибки файловой системы' },
+            q19: { a: 'Использование USB 3.0', b: 'Неправильное извлечение', c: 'Аппаратное шифрование', d: 'Высокая температура' },
+            q20: { a: 'BitLocker', b: 'Recuva', c: 'VeraCrypt', d: 'Paint' },
+            q21: { a: 'Хранения документов', b: 'Установки операционных систем', c: 'Передачи данных по Wi-Fi', d: 'Защиты от вирусов' },
+            q22: { a: 'Lenovo', b: 'SanDisk', c: 'Acer', d: 'HP' },
+            q23: { a: 'Использовать шифрование', b: 'Использовать металлический корпус', c: 'Форматировать в NTFS', d: 'Проверять на вирусы' },
+            q24: { a: 'Это замедляет передачу', b: 'Это повреждает файлы', c: 'Это снижает надёжность', d: 'Это перегревает флешку' },
+            q25: { a: 'Форматирование в FAT32', b: 'Использование паролей и шифрования', c: 'Хранение в тёплом месте', d: 'Использование USB 2.0' }
+        };
+        const explanations = {
+            q1: 'USB-флешки используют флеш-память для хранения данных.',
+            q2: 'Первую коммерческую флешку в 2000 году представила IBM совместно с M-Systems.',
+            q3: 'Контроллер управляет процессами чтения и записи на флешке.',
+            q4: 'SLC хранит 1 бит в ячейке и отличается высокой долговечностью.',
+            q5: 'QLC — самый дешёвый тип флеш-памяти, но менее надёжный.',
+            q6: 'USB 4.0 обеспечивает скорость передачи данных до 40 Гбит/с.',
+            q7: 'Для хранения больших файлов подходит флешка объёмом от 128 ГБ.',
+            q8: 'exFAT поддерживает файлы больше 4 ГБ и совместима с Windows и macOS.',
+            q9: 'Защищённые флешки имеют защиту от воды, пыли и ударов.',
+            q10: 'Флеш-память TLC выдерживает около 3 000 циклов записи.',
+            q11: 'Wear Leveling равномерно распределяет нагрузку, продлевая срок службы флешки.',
+            q12: 'Переключатель Read-Only защищает данные от записи и удаления.',
+            q13: 'Беспроводные флешки позволяют передавать данные без проводного подключения.',
+            q14: 'Промышленные флешки применяются в медицинском, военном и автомобильном оборудовании.',
+            q15: 'Флешки превосходят HDD в портативности благодаря компактности.',
+            q16: 'Подключение к неизвестному ПК может привести к заражению флешки вирусами.',
+            q17: 'VeraCrypt используется для шифрования данных на флешке.',
+            q18: 'Физическое повреждение разъёма — самая частая неисправность флешек.',
+            q19: 'Ошибки файловой системы могут возникать из-за неправильного извлечения флешки.',
+            q20: 'Recuva помогает восстановить данные с повреждённой флешки.',
+            q21: 'Загрузочные флешки используются для установки операционных систем.',
+            q22: 'SanDisk — один из надёжных брендов USB-флешек.',
+            q23: 'Металлический корпус защищает флешку от механических повреждений.',
+            q24: 'Извлечение флешки во время передачи данных может повредить файлы.',
+            q25: 'Для конфиденциальных данных рекомендуется использовать пароли и шифрование.'
+        };
+        const answers = {};
+
+        function startTest() {
+            document.querySelector('.intro').classList.remove('active');
+            currentQuestion = 1;
+            document.querySelector(`.question[data-question="${currentQuestion}"]`).classList.add('active');
+            document.querySelector('.buttons').classList.add('active');
+        }
+
+        function prevQuestion() {
+            if (currentQuestion > 1) {
+                document.querySelector(`.question[data-question="${currentQuestion}"]`).classList.remove('active');
+                currentQuestion--;
+                document.querySelector(`.question[data-question="${currentQuestion}"]`).classList.add('active');
+            }
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < totalQuestions) {
+                document.querySelector(`.question[data-question="${currentQuestion}"]`).classList.remove('active');
+                currentQuestion++;
+                document.querySelector(`.question[data-question="${currentQuestion}"]`).classList.add('active');
+            }
+        }
+
+        function finishTest() {
+            let score = 0;
+            for (let i = 1; i <= totalQuestions; i++) {
+                const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                if (selected) {
+                    answers[`q${i}`] = selected.value;
+                    if (selected.value === correctAnswers[`q${i}`]) {
+                        score++;
+                    }
+                }
+            }
+
+            document.querySelector(`.question[data-question="${currentQuestion}"]`).classList.remove('active');
+            document.querySelector('.buttons').classList.remove('active');
+            document.querySelector('.results').classList.add('active');
+            document.getElementById('score').innerText = `Вы набрали ${score} из ${totalQuestions} баллов!`;
+
+            const resultsTable = document.getElementById('resultsTable');
+            resultsTable.innerHTML = '';
+            for (let i = 1; i <= totalQuestions; i++) {
+                const row = document.createElement('tr');
+                const questionCell = document.createElement('td');
+                const userAnswerCell = document.createElement('td');
+                const correctAnswerCell = document.createElement('td');
+                const statusCell = document.createElement('td');
+                const explanationCell = document.createElement('td');
+
+                questionCell.innerText = questionsText[`q${i}`];
+                const userAnswer = answers[`q${i}`] || 'Не отвечено';
+                userAnswerCell.innerText = optionsText[`q${i}`][userAnswer] || 'Не отвечено';
+                correctAnswerCell.innerText = optionsText[`q${i}`][correctAnswers[`q${i}`]];
+                statusCell.innerText = userAnswer === correctAnswers[`q${i}`] ? 'Правильно' : 'Неправильно';
+                statusCell.className = userAnswer === correctAnswers[`q${i}`] ? 'correct' : 'incorrect';
+                explanationCell.innerText = explanations[`q${i}`];
+
+                row.appendChild(questionCell);
+                row.appendChild(userAnswerCell);
+                row.appendChild(correctAnswerCell);
+                row.appendChild(statusCell);
+                row.appendChild(explanationCell);
+                resultsTable.appendChild(row);
+            }
+        }
+
+        function restartTest() {
+            currentQuestion = 0;
+            document.querySelector('.results').classList.remove('active');
+            document.querySelector('.intro').classList.add('active');
+            document.querySelector('.buttons').classList.remove('active');
+            document.querySelectorAll('input[type="radio"]').forEach(input => input.checked = false);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,502 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест для практикантов сервисного центра</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+            text-align: center;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1, h2 {
+            color: #333;
+        }
+        .intro, .question, .results {
+            display: none;
+        }
+        .intro.active, .question.active, .results.active {
+            display: block;
+        }
+        .question label {
+            display: block;
+            margin: 10px 0;
+            font-size: 16px;
+        }
+        .buttons {
+            margin-top: 20px;
+            display: none;
+        }
+        .buttons.active {
+            display: block;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007BFF;
+            color: #fff;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        input[type="radio"] {
+            margin-right: 10px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .correct {
+            color: green;
+        }
+        .incorrect {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Вводная страница -->
+        <div class="intro active">
+            <h1>Тест по уроку</h1>
+            <p>Введение в работу сервисного центра, проверьте свои знания. Желаю удачи!</p>
+            <p>Не подсматривайте ответы в интернете, НАДЗИРАТЕЛЬ наблюдает!</p>
+            <button onclick="startTest()">Начать тест</button>
+        </div>
+
+        <!-- Вопросы -->
+        <div class="question" data-question="1">
+            <h2>1. Что делают в сервисном центре в первую очередь, чтобы найти проблему устройства?</h2>
+            <label><input type="radio" name="q1" value="a"> Чинят устройство</label>
+            <label><input type="radio" name="q1" value="b"> Проводят диагностику</label>
+            <label><input type="radio" name="q1" value="c"> Чистят от пыли</label>
+            <label><input type="radio" name="q1" value="d"> Обновляют программы</label>
+        </div>
+        <div class="question" data-question="2">
+            <h2>2. Какой процесс помогает выявить проблему, если устройство не включается?</h2>
+            <label><input type="radio" name="q2" value="a"> Проверка кабеля питания</label>
+            <label><input type="radio" name="q2" value="b"> Замена процессора</label>
+            <label><input type="radio" name="q2" value="c"> Обновление BIOS</label>
+            <label><input type="radio" name="q2" value="d"> Чистка кулера</label>
+        </div>
+        <div class="question" data-question="3">
+            <h2>3. Что делают, если устройство сильно нагревается?</h2>
+            <label><input type="radio" name="q3" value="a"> Обновляют драйверы</label>
+            <label><input type="radio" name="q3" value="b"> Проверяют систему охлаждения</label>
+            <label><input type="radio" name="q3" value="c"> Заменяют батарею</label>
+            <label><input type="radio" name="q3" value="d"> Устанавливают антивирус</label>
+        </div>
+        <div class="question" data-question="4">
+            <h2>4. Какой процесс улучшает производительность устройства?</h2>
+            <label><input type="radio" name="q4" value="a"> Замена экрана</label>
+            <label><input type="radio" name="q4" value="b"> Увеличение оперативной памяти</label>
+            <label><input type="radio" name="q4" value="c"> Чистка корпуса</label>
+            <label><input type="radio" name="q4" value="d"> Обновление BIOS</label>
+        </div>
+        <div class="question" data-question="5">
+            <h2>5. Что проверяют, если устройство не заряжается?</h2>
+            <label><input type="radio" name="q5" value="a"> Процессор</label>
+            <label><input type="radio" name="q5" value="b"> Зарядное устройство и порт</label>
+            <label><input type="radio" name="q5" value="c"> Жесткий диск</label>
+            <label><input type="radio" name="q5" value="d"> Оперативную память</label>
+        </div>
+        <div class="question" data-question="6">
+            <h2>6. Что надевают, чтобы защитить устройство от статического электричества?</h2>
+            <label><input type="radio" name="q6" value="a"> Очки</label>
+            <label><input type="radio" name="q6" value="b"> Антистатический браслет</label>
+            <label><input type="radio" name="q6" value="c"> Перчатки</label>
+            <label><input type="radio" name="q6" value="d"> Маску</label>
+        </div>
+        <div class="question" data-question="7">
+            <h2>7. Какой предмет защищает от поражения током при работе с устройством?</h2>
+            <label><input type="radio" name="q7" value="a"> Резиновые перчатки</label>
+            <label><input type="radio" name="q7" value="b"> Антистатический коврик</label>
+            <label><input type="radio" name="q7" value="c"> Очки</label>
+            <label><input type="radio" name="q7" value="d"> Маска</label>
+        </div>
+        <div class="question" data-question="8">
+            <h2>8. Что используют для защиты глаз при пайке?</h2>
+            <label><input type="radio" name="q8" value="a"> Антистатический браслет</label>
+            <label><input type="radio" name="q8" value="b"> Защитные очки</label>
+            <label><input type="radio" name="q8" value="c"> Перчатки</label>
+            <label><input type="radio" name="q8" value="d"> Респиратор</label>
+        </div>
+        <div class="question" data-question="9">
+            <h2>9. Какой предмет предотвращает случайное повреждение платы?</h2>
+            <label><input type="radio" name="q9" value="a"> Отвертка</label>
+            <label><input type="radio" name="q9" value="b"> Антистатический коврик</label>
+            <label><input type="radio" name="q9" value="c"> Паяльник</label>
+            <label><input type="radio" name="q9" value="d"> Мультиметр</label>
+        </div>
+        <div class="question" data-question="10">
+            <h2>10. Что делают перед разборкой устройства для безопасности?</h2>
+            <label><input type="radio" name="q10" value="a"> Обновляют ПО</label>
+            <label><input type="radio" name="q10" value="b"> Отключают от сети</label>
+            <label><input type="radio" name="q10" value="c"> Чистят корпус</label>
+            <label><input type="radio" name="q10" value="d"> Проверяют драйверы</label>
+        </div>
+        <div class="question" data-question="11">
+            <h2>11. Какой инструмент используют для откручивания винтов в устройствах?</h2>
+            <label><input type="radio" name="q11" value="a"> Мультиметр</label>
+            <label><input type="radio" name="q11" value="b"> Отвертка</label>
+            <label><input type="radio" name="q11" value="c"> Паяльник</label>
+            <label><input type="radio" name="q11" value="d"> Кисточка</label>
+        </div>
+        <div class="question" data-question="12">
+            <h2>12. Какой прибор измеряет напряжение в цепи?</h2>
+            <label><input type="radio" name="q12" value="a"> Отвертка</label>
+            <label><input type="radio" name="q12" value="b"> Мультиметр</label>
+            <label><input type="radio" name="q12" value="c"> Паяльник</label>
+            <label><input type="radio" name="q12" value="d"> Термометр</label>
+        </div>
+        <div class="question" data-question="13">
+            <h2>13. Что используют для очистки платы от пыли?</h2>
+            <label><input type="radio" name="q13" value="a"> Паяльник</label>
+            <label><input type="radio" name="q13" value="b"> Баллон со сжатым воздухом</label>
+            <label><input type="radio" name="q13" value="c"> Мультиметр</label>
+            <label><input type="radio" name="q13" value="d"> Отвертка</label>
+        </div>
+        <div class="question" data-question="14">
+            <h2>14. Какой интерфейс проще в использовании: BIOS или UEFI?</h2>
+            <label><input type="radio" name="q14" value="a"> BIOS, у него текстовый интерфейс</label>
+            <label><input type="radio" name="q14" value="b"> UEFI, у него графический интерфейс</label>
+            <label><input type="radio" name="q14" value="c"> Оба сложные</label>
+            <label><input type="radio" name="q14" value="d"> Оба текстовые</label>
+        </div>
+        <div class="question" data-question="15">
+            <h2>15. Какой компонент отвечает за начальную загрузку системы?</h2>
+            <label><input type="radio" name="q15" value="a"> Жесткий диск</label>
+            <label><input type="radio" name="q15" value="b"> BIOS/UEFI</label>
+            <label><input type="radio" name="q15" value="c"> Оперативная память</label>
+            <label><input type="radio" name="q15" value="d"> Процессор</label>
+        </div>
+        <div class="question" data-question="16">
+            <h2>16. Что позволяет UEFI, чего нет в BIOS?</h2>
+            <label><input type="radio" name="q16" value="a"> Поддержка больших дисков</label>
+            <label><input type="radio" name="q16" value="b"> Текстовый интерфейс</label>
+            <label><input type="radio" name="q16" value="c"> Ограничение загрузки</label>
+            <label><input type="radio" name="q16" value="d"> Работа только с 32-бит</label>
+        </div>
+        <div class="question" data-question="17">
+            <h2>17. Какой процесс требуется перед обновлением BIOS/UEFI?</h2>
+            <label><input type="radio" name="q17" value="a"> Форматирование диска</label>
+            <label><input type="radio" name="q17" value="b"> Резервное копирование настроек</label>
+            <label><input type="radio" name="q17" value="c"> Установка антивируса</label>
+            <label><input type="radio" name="q17" value="d"> Чистка кулера</label>
+        </div>
+        <div class="question" data-question="18">
+            <h2>18. Какой режим в BIOS/UEFI позволяет снизить энергопотребление?</h2>
+            <label><input type="radio" name="q18" value="a"> Secure Boot</label>
+            <label><input type="radio" name="q18" value="b"> Power Saving Mode</label>
+            <label><input type="radio" name="q18" value="c"> Legacy Mode</label>
+            <label><input type="radio" name="q18" value="d"> Fast Boot</label>
+        </div>
+        <div class="question" data-question="19">
+            <h2>19. Какой ключ чаще всего открывает меню BIOS/UEFI?</h2>
+            <label><input type="radio" name="q19" value="a"> Ctrl</label>
+            <label><input type="radio" name="q19" value="b"> Del</label>
+            <label><input type="radio" name="q19" value="c"> Shift</label>
+            <label><input type="radio" name="q19" value="d"> Alt</label>
+        </div>
+        <div class="question" data-question="20">
+            <h2>20. Какой процесс защищает устройство от несанкционированного доступа?</h2>
+            <label><input type="radio" name="q20" value="a"> Установка пароля BIOS</label>
+            <label><input type="radio" name="q20" value="b"> Чистка платы</label>
+            <label><input type="radio" name="q20" value="c"> Обновление драйверов</label>
+            <label><input type="radio" name="q20" value="d"> Замена батареи</label>
+        </div>
+        <div class="question" data-question="21">
+            <h2>21. Какой тип диагностики выполняется автоматически при включении?</h2>
+            <label><input type="radio" name="q21" value="a"> POST</label>
+            <label><input type="radio" name="q21" value="b"> Антивирусная проверка</label>
+            <label><input type="radio" name="q21" value="c"> Проверка драйверов</label>
+            <label><input type="radio" name="q21" value="d"> Чистка системы</label>
+        </div>
+        <div class="question" data-question="22">
+            <h2>22. Какой инструмент помогает измерить температуру процессора?</h2>
+            <label><input type="radio" name="q22" value="a"> Мультиметр</label>
+            <label><input type="radio" name="q22" value="b"> Программное обеспечение</label>
+            <label><input type="radio" name="q22" value="c"> Паяльник</label>
+            <label><input type="radio" name="q22" value="d"> Отвертка</label>
+        </div>
+        <div class="question" data-question="23">
+            <h2>23. Что используют для нанесения термопасты?</h2>
+            <label><input type="radio" name="q23" value="a"> Паяльник</label>
+            <label><input type="radio" name="q23" value="b"> Пластиковая лопатка</label>
+            <label><input type="radio" name="q23" value="c"> Мультиметр</label>
+            <label><input type="radio" name="q23" value="d"> Кисточка</label>
+        </div>
+        <div class="question" data-question="24">
+            <h2>24. Какой процесс помогает восстановить заводские настройки BIOS/UEFI?</h2>
+            <label><input type="radio" name="q24" value="a"> Сброс CMOS</label>
+            <label><input type="radio" name="q24" value="b"> Обновление прошивки</label>
+            <label><input type="radio" name="q24" value="c"> Чистка платы</label>
+            <label><input type="radio" name="q24" value="d"> Замена процессора</label>
+        </div>
+        <div class="question" data-question="25">
+            <h2>25. Какой элемент BIOS/UEFI отвечает за порядок загрузки устройств?</h2>
+            <label><input type="radio" name="q25" value="a"> Boot Priority</label>
+            <label><input type="radio" name="q25" value="b"> Secure Boot</label>
+            <label><input type="radio" name="q25" value="c"> Power Saving Mode</label>
+            <label><input type="radio" name="q25" value="d"> Legacy Mode</label>
+        </div>
+
+        <!-- Кнопки навигации -->
+        <div class="buttons">
+            <button onclick="prevQuestion()">Предыдущий вопрос</button>
+            <button onclick="nextQuestion()">Следующий вопрос</button>
+            <button onclick="finishTest()">Завершить тест</button>
+        </div>
+
+        <!-- Результаты -->
+        <div class="results">
+            <h2>Результаты теста</h2>
+            <p id="score"></p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Вопрос</th>
+                        <th>Ваш ответ</th>
+                        <th>Правильный ответ</th>
+                        <th>Статус</th>
+                        <th>Объяснение</th>
+                    </tr>
+                </thead>
+                <tbody id="resultsTable"></tbody>
+            </table>
+            <button onclick="restartTest()">Пройти тест заново</button>
+        </div>
+    </div>
+
+    <script>
+        let currentQuestion = 0;
+        const totalQuestions = 25;
+        const correctAnswers = {
+            q1: 'b', q2: 'a', q3: 'b', q4: 'b', q5: 'b',
+            q6: 'b', q7: 'a', q8: 'b', q9: 'b', q10: 'b',
+            q11: 'b', q12: 'b', q13: 'b', q14: 'b', q15: 'b',
+            q16: 'a', q17: 'b', q18: 'b', q19: 'b', q20: 'a',
+            q21: 'a', q22: 'b', q23: 'b', q24: 'a', q25: 'a'
+        };
+        const questionsText = {
+            q1: 'Что делают в сервисном центре в первую очередь, чтобы найти проблему устройства?',
+            q2: 'Какой процесс помогает выявить проблему, если устройство не включается?',
+            q3: 'Что делают, если устройство сильно нагревается?',
+            q4: 'Какой процесс улучшает производительность устройства?',
+            q5: 'Что проверяют, если устройство не заряжается?',
+            q6: 'Что надевают, чтобы защитить устройство от статического электричества?',
+            q7: 'Какой предмет защищает от поражения током при работе с устройством?',
+            q8: 'Что используют для защиты глаз при пайке?',
+            q9: 'Какой предмет предотвращает случайное повреждение платы?',
+            q10: 'Что делают перед разборкой устройства для безопасности?',
+            q11: 'Какой инструмент используют для откручивания винтов в устройствах?',
+            q12: 'Какой прибор измеряет напряжение в цепи?',
+            q13: 'Что используют для очистки платы от пыли?',
+            q14: 'Какой интерфейс проще в использовании: BIOS или UEFI?',
+            q15: 'Какой компонент отвечает за начальную загрузку системы?',
+            q16: 'Что позволяет UEFI, чего нет в BIOS?',
+            q17: 'Какой процесс требуется перед обновлением BIOS/UEFI?',
+            q18: 'Какой режим в BIOS/UEFI позволяет снизить энергопотребление?',
+            q19: 'Какой ключ чаще всего открывает меню BIOS/UEFI?',
+            q20: 'Какой процесс защищает устройство от несанкционированного доступа?',
+            q21: 'Какой тип диагностики выполняется автоматически при включении?',
+            q22: 'Какой инструмент помогает измерить температуру процессора?',
+            q23: 'Что используют для нанесения термопасты?',
+            q24: 'Какой процесс помогает восстановить заводские настройки BIOS/UEFI?',
+            q25: 'Какой элемент BIOS/UEFI отвечает за порядок загрузки устройств?'
+        };
+        const optionsText = {
+            q1: { a: 'Чинят устройство', b: 'Проводят диагностику', c: 'Чистят от пыли', d: 'Обновляют программы' },
+            q2: { a: 'Проверка кабеля питания', b: 'Замена процессора', c: 'Обновление BIOS', d: 'Чистка кулера' },
+            q3: { a: 'Обновляют драйверы', b: 'Проверяют систему охлаждения', c: 'Заменяют батарею', d: 'Устанавливают антивирус' },
+            q4: { a: 'Замена экрана', b: 'Увеличение оперативной памяти', c: 'Чистка корпуса', d: 'Обновление BIOS' },
+            q5: { a: 'Процессор', b: 'Зарядное устройство и порт', c: 'Жесткий диск', d: 'Оперативную память' },
+            q6: { a: 'Очки', b: 'Антистатический браслет', c: 'Перчатки', d: 'Маску' },
+            q7: { a: 'Резиновые перчатки', b: 'Антистатический коврик', c: 'Очки', d: 'Маска' },
+            q8: { a: 'Антистатический браслет', b: 'Защитные очки', c: 'Перчатки', d: 'Респиратор' },
+            q9: { a: 'Отвертка', b: 'Антистатический коврик', c: 'Паяльник', d: 'Мультиметр' },
+            q10: { a: 'Обновляют ПО', b: 'Отключают от сети', c: 'Чистят корпус', d: 'Проверяют драйверы' },
+            q11: { a: 'Мультиметр', b: 'Отвертка', c: 'Паяльник', d: 'Кисточка' },
+            q12: { a: 'Отвертка', b: 'Мультиметр', c: 'Паяльник', d: 'Термометр' },
+            q13: { a: 'Паяльник', b: 'Баллон со сжатым воздухом', c: 'Мультиметр', d: 'Отвертка' },
+            q14: { a: 'BIOS, у него текстовый интерфейс', b: 'UEFI, у него графический интерфейс', c: 'Оба сложные', d: 'Оба текстовые' },
+            q15: { a: 'Жесткий диск', b: 'BIOS/UEFI', c: 'Оперативная память', d: 'Процессор' },
+            q16: { a: 'Поддержка больших дисков', b: 'Текстовый интерфейс', c: 'Ограничение загрузки', d: 'Работа только с 32-бит' },
+            q17: { a: 'Форматирование диска', b: 'Резервное копирование настроек', c: 'Установка антивируса', d: 'Чистка кулера' },
+            q18: { a: 'Secure Boot', b: 'Power Saving Mode', c: 'Legacy Mode', d: 'Fast Boot' },
+            q19: { a: 'Ctrl', b: 'Del', c: 'Shift', d: 'Alt' },
+            q20: { a: 'Установка пароля BIOS', b: 'Чистка платы', c: 'Обновление драйверов', d: 'Замена батареи' },
+            q21: { a: 'POST', b: 'Антивирусная проверка', c: 'Проверка драйверов', d: 'Чистка системы' },
+            q22: { a: 'Мультиметр', b: 'Программное обеспечение', c: 'Паяльник', d: 'Отвертка' },
+            q23: { a: 'Паяльник', b: 'Пластиковая лопатка', c: 'Мультиметр', d: 'Кисточка' },
+            q24: { a: 'Сброс CMOS', b: 'Обновление прошивки', c: 'Чистка платы', d: 'Замена процессора' },
+            q25: { a: 'Boot Priority', b: 'Secure Boot', c: 'Power Saving Mode', d: 'Legacy Mode' }
+        };
+        const explanations = {
+            q1: 'Диагностика — первый шаг, чтобы определить проблему устройства.',
+            q2: 'Проверка кабеля питания выявляет, поступает ли питание.',
+            q3: 'Проверка системы охлаждения решает проблему перегрева.',
+            q4: 'Увеличение оперативной памяти улучшает производительность.',
+            q5: 'Проверка зарядного устройства и порта выявляет причину.',
+            q6: 'Антистатический браслет защищает от статического электричества.',
+            q7: 'Резиновые перчатки предотвращают поражение током.',
+            q8: 'Защитные очки необходимы при пайке для защиты глаз.',
+            q9: 'Антистатический коврик предотвращает повреждение платы.',
+            q10: 'Отключение от сети исключает риск поражения током.',
+            q11: 'Отвертка используется для откручивания винтов.',
+            q12: 'Мультиметр измеряет напряжение в цепи.',
+            q13: 'Баллон со сжатым воздухом очищает плату от пыли.',
+            q14: 'UEFI имеет графический интерфейс, что делает его проще.',
+            q15: 'BIOS/UEFI отвечает за начальную загрузку системы.',
+            q16: 'UEFI поддерживает диски больше 2 ТБ, в отличие от BIOS.',
+            q17: 'Резервное копирование настроек защищает от сбоев.',
+            q18: 'Power Saving Mode снижает энергопотребление.',
+            q19: 'Клавиша Del чаще всего открывает BIOS/UEFI.',
+            q20: 'Установка пароля BIOS защищает от несанкционированного доступа.',
+            q21: 'POST автоматически проверяет оборудование при включении.',
+            q22: 'Программное обеспечение измеряет температуру процессора.',
+            q23: 'Пластиковая лопатка равномерно наносит термопасту.',
+            q24: 'Сброс CMOS восстанавливает заводские настройки.',
+            q25: 'Boot Priority определяет порядок загрузки устройств.'
+        };
+        const answers = {};
+
+        function startTest() {
+            document.querySelector('.intro').classList.remove('active');
+            currentQuestion = 1;
+            document.querySelector(`.question[data-question="${currentQuestion}"]`).classList.add('active');
+            document.querySelector('.buttons').classList.add('active');
+        }
+
+        function prevQuestion() {
+            if (currentQuestion > 1) {
+                document.querySelector(`.question[data-question="${currentQuestion}"]`).classList.remove('active');
+                currentQuestion--;
+                document.querySelector(`.question[data-question="${currentQuestion}"]`).classList.add('active');
+            }
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < totalQuestions) {
+                document.querySelector(`.question[data-question="${currentQuestion}"]`).classList.remove('active');
+                currentQuestion++;
+                document.querySelector(`.question[data-question="${currentQuestion}"]`).classList.add('active');
+            }
+        }
+
+        function finishTest() {
+            let score = 0;
+            for (let i = 1; i <= totalQuestions; i++) {
+                const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                if (selected) {
+                    answers[`q${i}`] = selected.value;
+                    if (selected.value === correctAnswers[`q${i}`]) {
+                        score++;
+                    }
+                }
+            }
+
+            document.querySelector(`.question[data-question="${currentQuestion}"]`).classList.remove('active');
+            document.querySelector('.buttons').classList.remove('active');
+            document.querySelector('.results').classList.add('active');
+            document.getElementById('score').innerText = `Вы набрали ${score} из ${totalQuestions} баллов!`;
+
+            const resultsTable = document.getElementById('resultsTable');
+            resultsTable.innerHTML = '';
+            for (let i = 1; i <= totalQuestions; i++) {
+                const row = document.createElement('tr');
+                const questionCell = document.createElement('td');
+                const userAnswerCell = document.createElement('td');
+                const correctAnswerCell = document.createElement('td');
+                const statusCell = document.createElement('td');
+                const explanationCell = document.createElement('td');
+
+                questionCell.innerText = questionsText[`q${i}`];
+                const userAnswer = answers[`q${i}`] || 'Не отвечено';
+                userAnswerCell.innerText = optionsText[`q${i}`][userAnswer] || 'Не отвечено';
+                correctAnswerCell.innerText = optionsText[`q${i}`][correctAnswers[`q${i}`]];
+                statusCell.innerText = userAnswer === correctAnswers[`q${i}`] ? 'Правильно' : 'Неправильно';
+                statusCell.className = userAnswer === correctAnswers[`q${i}`] ? 'correct' : 'incorrect';
+                explanationCell.innerText = explanations[`q${i}`];
+
+                row.appendChild(questionCell);
+                row.appendChild(userAnswerCell);
+                row.appendChild(correctAnswerCell);
+                row.appendChild(statusCell);
+                row.appendChild(explanationCell);
+                resultsTable.appendChild(row);
+            }
+        }
+
+        function restartTest() {
+            currentQuestion = 0;
+            document.querySelector('.results').classList.remove('active');
+            document.querySelector('.intro').classList.add('active');
+            document.querySelector('.buttons').classList.remove('active');
+            document.querySelectorAll('input[type="radio"]').forEach(input => input.checked = false);
+        }
+    </script>
+</body>
+</html>

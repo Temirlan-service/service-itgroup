@@ -1,0 +1,502 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест по сборке ПК</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+            text-align: center;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1, h2 {
+            color: #333;
+        }
+        .intro, .question, .results {
+            display: none;
+        }
+        .intro.active, .question.active, .results.active {
+            display: block;
+        }
+        .question label {
+            display: block;
+            margin: 10px 0;
+            font-size: 16px;
+        }
+        .buttons {
+            margin-top: 20px;
+            display: none;
+        }
+        .buttons.active {
+            display: block;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007BFF;
+            color: #fff;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        input[type="radio"] {
+            margin-right: 10px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .correct {
+            color: green;
+        }
+        .incorrect {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Вводная страница -->
+        <div class="intro active">
+            <h1>Тест по уроку</h1>
+            <p>Сборка ПК: компоненты, этапы и настройка, проверьте свои знания. Желаю удачи!</p>
+            <p>Не подсматривайте ответы в интернете, НАДЗИРАТЕЛЬ наблюдает!</p>
+            <button onclick="startTest()">Начать тест</button>
+        </div>
+
+        <!-- Вопросы -->
+        <div class="question" data-question="1">
+            <h2>1. Какую роль выполняет материнская плата в ПК?</h2>
+            <label><input type="radio" name="q1" value="a"> Обрабатывает графику</label>
+            <label><input type="radio" name="q1" value="b"> Связывает все компоненты</label>
+            <label><input type="radio" name="q1" value="c"> Хранит данные</label>
+            <label><input type="radio" name="q1" value="d"> Подаёт питание</label>
+        </div>
+        <div class="question" data-question="2">
+            <h2>2. Какой компонент ПК называют "мозгом" компьютера?</h2>
+            <label><input type="radio" name="q2" value="a"> Видеокарта</label>
+            <label><input type="radio" name="q2" value="b"> Процессор</label>
+            <label><input type="radio" name="q2" value="c"> Оперативная память</label>
+            <label><input type="radio" name="q2" value="d"> Блок питания</label>
+        </div>
+        <div class="question" data-question="3">
+            <h2>3. Какой тип оперативной памяти не совместим с DDR4?</h2>
+            <label><input type="radio" name="q3" value="a"> DDR3</label>
+            <label><input type="radio" name="q3" value="b"> DDR5</label>
+            <label><input type="radio" name="q3" value="c"> DDR2</label>
+            <label><input type="radio" name="q3" value="d"> DDR1</label>
+        </div>
+        <div class="question" data-question="4">
+            <h2>4. Для чего обязательна дискретная видеокарта?</h2>
+            <label><input type="radio" name="q4" value="a"> Офисных задач</label>
+            <label><input type="radio" name="q4" value="b"> Игр и 3D-графики</label>
+            <label><input type="radio" name="q4" value="c"> Хранения данных</label>
+            <label><input type="radio" name="q4" value="d"> Подключения периферии</label>
+        </div>
+        <div class="question" data-question="5">
+            <h2>5. Какую мощность блока питания рекомендуется для средней игровой сборки?</h2>
+            <label><input type="radio" name="q5" value="a"> 300 Вт</label>
+            <label><input type="radio" name="q5" value="b"> 500–850 Вт</label>
+            <label><input type="radio" name="q5" value="c"> 1000 Вт</label>
+            <label><input type="radio" name="q5" value="d"> 1500 Вт</label>
+        </div>
+        <div class="question" data-question="6">
+            <h2>6. Какой накопитель быстрее и тише по сравнению с HDD?</h2>
+            <label><input type="radio" name="q6" value="a"> SSD</label>
+            <label><input type="radio" name="q6" value="b"> DVD</label>
+            <label><input type="radio" name="q6" value="c"> USB-флешка</label>
+            <label><input type="radio" name="q6" value="d"> SD-карта</label>
+        </div>
+        <div class="question" data-question="7">
+            <h2>7. Какой форм-фактор корпуса самый компактный?</h2>
+            <label><input type="radio" name="q7" value="a"> ATX</label>
+            <label><input type="radio" name="q7" value="b"> Micro-ATX</label>
+            <label><input type="radio" name="q7" value="c"> Mini-ITX</label>
+            <label><input type="radio" name="q7" value="d"> E-ATX</label>
+        </div>
+        <div class="question" data-question="8">
+            <h2>8. Что предотвращает повреждение компонентов статическим током?</h2>
+            <label><input type="radio" name="q8" value="a"> Пылевой фильтр</label>
+            <label><input type="radio" name="q8" value="b"> Антистатический браслет</label>
+            <label><input type="radio" name="q8" value="c"> Жидкостное охлаждение</label>
+            <label><input type="radio" name="q8" value="d"> ИБП</label>
+        </div>
+        <div class="question" data-question="9">
+            <h2>9. Какой шаг сборки ПК выполняется первым?</h2>
+            <label><input type="radio" name="q9" value="a"> Установка видеокарты</label>
+            <label><input type="radio" name="q9" value="b"> Подключение кабелей</label>
+            <label><input type="radio" name="q9" value="c"> Установка процессора</label>
+            <label><input type="radio" name="q9" value="d"> Монтаж блока питания</label>
+        </div>
+        <div class="question" data-question="10">
+            <h2>10. Что проверяется при первом входе в BIOS/UEFI?</h2>
+            <label><input type="radio" name="q10" value="a"> Скорость интернета</label>
+            <label><input type="radio" name="q10" value="b"> Распознавание компонентов</label>
+            <label><input type="radio" name="q10" value="c"> Установка драйверов</label>
+            <label><input type="radio" name="q10" value="d"> Температура корпуса</label>
+        </div>
+        <div class="question" data-question="11">
+            <h2>11. Какой чипсет Intel поддерживает разгон процессоров?</h2>
+            <label><input type="radio" name="q11" value="a"> B660</label>
+            <label><input type="radio" name="q11" value="b"> Z690</label>
+            <label><input type="radio" name="q11" value="c"> H610</label>
+            <label><input type="radio" name="q11" value="d"> A620</label>
+        </div>
+        <div class="question" data-question="12">
+            <h2>12. Какой стандарт сертификации блока питания обеспечивает высокую эффективность?</h2>
+            <label><input type="radio" name="q12" value="a"> 80 PLUS Bronze</label>
+            <label><input type="radio" name="q12" value="b"> 80 PLUS Gold</label>
+            <label><input type="radio" name="q12" value="c"> 80 PLUS Silver</label>
+            <label><input type="radio" name="q12" value="d"> 80 PLUS Platinum</label>
+        </div>
+        <div class="question" data-question="13">
+            <h2>13. Какая программа используется для тестирования скорости SSD?</h2>
+            <label><input type="radio" name="q13" value="a"> Cinebench</label>
+            <label><input type="radio" name="q13" value="b"> CrystalDiskMark</label>
+            <label><input type="radio" name="q13" value="c"> FurMark</label>
+            <label><input type="radio" name="q13" value="d"> MemTest86</label>
+        </div>
+        <div class="question" data-question="14">
+            <h2>14. Какой тип охлаждения подходит для безвентиляторных систем?</h2>
+            <label><input type="radio" name="q14" value="a"> Воздушное</label>
+            <label><input type="radio" name="q14" value="b"> Жидкостное</label>
+            <label><input type="radio" name="q14" value="c"> Пассивное</label>
+            <label><input type="radio" name="q14" value="d"> Башенное</label>
+        </div>
+        <div class="question" data-question="15">
+            <h2>15. Какой разъём используется для подключения монитора с высоким разрешением?</h2>
+            <label><input type="radio" name="q15" value="a"> VGA</label>
+            <label><input type="radio" name="q15" value="b"> DVI</label>
+            <label><input type="radio" name="q15" value="c"> DisplayPort</label>
+            <label><input type="radio" name="q15" value="d"> RCA</label>
+        </div>
+        <div class="question" data-question="16">
+            <h2>16. Что улучшает циркуляцию воздуха в корпусе?</h2>
+            <label><input type="radio" name="q16" value="a"> Перегрев компонентов</label>
+            <label><input type="radio" name="q16" value="b"> Управление кабелями</label>
+            <label><input type="radio" name="q16" value="c"> Установка привода</label>
+            <label><input type="radio" name="q16" value="d"> Разгон процессора</label>
+        </div>
+        <div class="question" data-question="17">
+            <h2>17. Какой компонент может выйти из строя из-за дешёвого блока питания?</h2>
+            <label><input type="radio" name="q17" value="a"> Корпус</label>
+            <label><input type="radio" name="q17" value="b"> Видеокарта</label>
+            <label><input type="radio" name="q17" value="c"> Вентилятор</label>
+            <label><input type="radio" name="q17" value="d"> Монитор</label>
+        </div>
+        <div class="question" data-question="18">
+            <h2>18. Какой тип памяти рекомендуется для серверных сборок?</h2>
+            <label><input type="radio" name="q18" value="a"> DDR4</label>
+            <label><input type="radio" name="q18" value="b"> ECC</label>
+            <label><input type="radio" name="q18" value="c"> DDR5</label>
+            <label><input type="radio" name="q18" value="d"> SDRAM</label>
+        </div>
+        <div class="question" data-question="19">
+            <h2>19. Какая частота оперативной памяти оптимальна для процессоров AMD?</h2>
+            <label><input type="radio" name="q19" value="a"> 1600 МГц</label>
+            <label><input type="radio" name="q19" value="b"> 3200–6000 МГц</label>
+            <label><input type="radio" name="q19" value="c"> 800 МГц</label>
+            <label><input type="radio" name="q19" value="d"> 2400 МГц</label>
+        </div>
+        <div class="question" data-question="20">
+            <h2>20. Какой объём видеопамяти нужен для 4K-гейминга?</h2>
+            <label><input type="radio" name="q20" value="a"> 4 ГБ</label>
+            <label><input type="radio" name="q20" value="b"> 8 ГБ</label>
+            <label><input type="radio" name="q20" value="c"> 16+ ГБ</label>
+            <label><input type="radio" name="q20" value="d"> 6 ГБ</label>
+        </div>
+        <div class="question" data-question="21">
+            <h2>21. Какой тест проверяет стабильность оперативной памяти?</h2>
+            <label><input type="radio" name="q21" value="a"> FurMark</label>
+            <label><input type="radio" name="q21" value="b"> MemTest86</label>
+            <label><input type="radio" name="q21" value="c"> Prime95</label>
+            <label><input type="radio" name="q21" value="d"> 3DMark</label>
+        </div>
+        <div class="question" data-question="22">
+            <h2>22. Какой разъём питания обязателен для процессора?</h2>
+            <label><input type="radio" name="q22" value="a"> 24-pin ATX</label>
+            <label><input type="radio" name="q22" value="b"> 6-pin GPU</label>
+            <label><input type="radio" name="q22" value="c"> 4/8-pin EPS</label>
+            <label><input type="radio" name="q22" value="d"> SATA</label>
+        </div>
+        <div class="question" data-question="23">
+            <h2>23. Что может повредить материнскую плату при сборке?</h2>
+            <label><input type="radio" name="q23" value="a"> Установка кулера</label>
+            <label><input type="radio" name="q23" value="b"> Перетянутые винты</label>
+            <label><input type="radio" name="q23" value="c"> Подключение кабелей</label>
+            <label><input type="radio" name="q23" value="d"> Чистка пыли</label>
+        </div>
+        <div class="question" data-question="24">
+            <h2>24. Какой тип SSD обеспечивает скорость до 12000 МБ/с?</h2>
+            <label><input type="radio" name="q24" value="a"> SATA SSD</label>
+            <label><input type="radio" name="q24" value="b"> NVMe PCIe 3.0</label>
+            <label><input type="radio" name="q24" value="c"> NVMe PCIe 4.0/5.0</label>
+            <label><input type="radio" name="q24" value="d"> M.2 SATA</label>
+        </div>
+        <div class="question" data-question="25">
+            <h2>25. Что защищает ПК от перепадов напряжения?</h2>
+            <label><input type="radio" name="q25" value="a"> Пылевой фильтр</label>
+            <label><input type="radio" name="q25" value="b"> ИБП</label>
+            <label><input type="radio" name="q25" value="c"> Термопаста</label>
+            <label><input type="radio" name="q25" value="d"> Fan hub</label>
+        </div>
+
+        <!-- Кнопки навигации -->
+        <div class="buttons">
+            <button onclick="prevQuestion()">Предыдущий вопрос</button>
+            <button onclick="nextQuestion()">Следующий вопрос</button>
+            <button onclick="finishTest()">Завершить тест</button>
+        </div>
+
+        <!-- Результаты -->
+        <div class="results">
+            <h2>Результаты теста</h2>
+            <p id="score"></p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Вопрос</th>
+                        <th>Ваш ответ</th>
+                        <th>Правильный ответ</th>
+                        <th>Статус</th>
+                        <th>Объяснение</th>
+                    </tr>
+                </thead>
+                <tbody id="resultsTable"></tbody>
+            </table>
+            <button onclick="restartTest()">Пройти тест заново</button>
+        </div>
+    </div>
+
+    <script>
+        let currentQuestion = 0;
+        const totalQuestions = 25;
+        const correctAnswers = {
+            q1: 'b', q2: 'b', q3: 'b', q4: 'b', q5: 'b',
+            q6: 'a', q7: 'c', q8: 'b', q9: 'c', q10: 'b',
+            q11: 'b', q12: 'b', q13: 'b', q14: 'c', q15: 'c',
+            q16: 'b', q17: 'b', q18: 'b', q19: 'b', q20: 'c',
+            q21: 'b', q22: 'c', q23: 'b', q24: 'c', q25: 'b'
+        };
+        const questionsText = {
+            q1: 'Какую роль выполняет материнская плата в ПК?',
+            q2: 'Какой компонент ПК называют "мозгом" компьютера?',
+            q3: 'Какой тип оперативной памяти не совместим с DDR4?',
+            q4: 'Для чего обязательна дискретная видеокарта?',
+            q5: 'Какую мощность блока питания рекомендуется для средней игровой сборки?',
+            q6: 'Какой накопитель быстрее и тише по сравнению с HDD?',
+            q7: 'Какой форм-фактор корпуса самый компактный?',
+            q8: 'Что предотвращает повреждение компонентов статическим током?',
+            q9: 'Какой шаг сборки ПК выполняется первым?',
+            q10: 'Что проверяется при первом входе в BIOS/UEFI?',
+            q11: 'Какой чипсет Intel поддерживает разгон процессоров?',
+            q12: 'Какой стандарт сертификации блока питания обеспечивает высокую эффективность?',
+            q13: 'Какая программа используется для тестирования скорости SSD?',
+            q14: 'Какой тип охлаждения подходит для безвентиляторных систем?',
+            q15: 'Какой разъём используется для подключения монитора с высоким разрешением?',
+            q16: 'Что улучшает циркуляцию воздуха в корпусе?',
+            q17: 'Какой компонент может выйти из строя из-за дешёвого блока питания?',
+            q18: 'Какой тип памяти рекомендуется для серверных сборок?',
+            q19: 'Какая частота оперативной памяти оптимальна для процессоров AMD?',
+            q20: 'Какой объём видеопамяти нужен для 4K-гейминга?',
+            q21: 'Какой тест проверяет стабильность оперативной памяти?',
+            q22: 'Какой разъём питания обязателен для процессора?',
+            q23: 'Что может повредить материнскую плату при сборке?',
+            q24: 'Какой тип SSD обеспечивает скорость до 12000 МБ/с?',
+            q25: 'Что защищает ПК от перепадов напряжения?'
+        };
+        const optionsText = {
+            q1: { a: 'Обрабатывает графику', b: 'Связывает все компоненты', c: 'Хранит данные', d: 'Подаёт питание' },
+            q2: { a: 'Видеокарта', b: 'Процессор', c: 'Оперативная память', d: 'Блок питания' },
+            q3: { a: 'DDR3', b: 'DDR5', c: 'DDR2', d: 'DDR1' },
+            q4: { a: 'Офисных задач', b: 'Игр и 3D-графики', c: 'Хранения данных', d: 'Подключения периферии' },
+            q5: { a: '300 Вт', b: '500–850 Вт', c: '1000 Вт', d: '1500 Вт' },
+            q6: { a: 'SSD', b: 'DVD', c: 'USB-флешка', d: 'SD-карта' },
+            q7: { a: 'ATX', b: 'Micro-ATX', c: 'Mini-ITX', d: 'E-ATX' },
+            q8: { a: 'Пылевой фильтр', b: 'Антистатический браслет', c: 'Жидкостное охлаждение', d: 'ИБП' },
+            q9: { a: 'Установка видеокарты', b: 'Подключение кабелей', c: 'Установка процессора', d: 'Монтаж блока питания' },
+            q10: { a: 'Скорость интернета', b: 'Распознавание компонентов', c: 'Установка драйверов', d: 'Температура корпуса' },
+            q11: { a: 'B660', b: 'Z690', c: 'H610', d: 'A620' },
+            q12: { a: '80 PLUS Bronze', b: '80 PLUS Gold', c: '80 PLUS Silver', d: '80 PLUS Platinum' },
+            q13: { a: 'Cinebench', b: 'CrystalDiskMark', c: 'FurMark', d: 'MemTest86' },
+            q14: { a: 'Воздушное', b: 'Жидкостное', c: 'Пассивное', d: 'Башенное' },
+            q15: { a: 'VGA', b: 'DVI', c: 'DisplayPort', d: 'RCA' },
+            q16: { a: 'Перегрев компонентов', b: 'Управление кабелями', c: 'Установка привода', d: 'Разгон процессора' },
+            q17: { a: 'Корпус', b: 'Видеокарта', c: 'Вентилятор', d: 'Монитор' },
+            q18: { a: 'DDR4', b: 'ECC', c: 'DDR5', d: 'SDRAM' },
+            q19: { a: '1600 МГц', b: '3200–6000 МГц', c: '800 МГц', d: '2400 МГц' },
+            q20: { a: '4 ГБ', b: '8 ГБ', c: '16+ ГБ', d: '6 ГБ' },
+            q21: { a: 'FurMark', b: 'MemTest86', c: 'Prime95', d: '3DMark' },
+            q22: { a: '24-pin ATX', b: '6-pin GPU', c: '4/8-pin EPS', d: 'SATA' },
+            q23: { a: 'Установка кулера', b: 'Перетянутые винты', c: 'Подключение кабелей', d: 'Чистка пыли' },
+            q24: { a: 'SATA SSD', b: 'NVMe PCIe 3.0', c: 'NVMe PCIe 4.0/5.0', d: 'M.2 SATA' },
+            q25: { a: 'Пылевой фильтр', b: 'ИБП', c: 'Термопаста', d: 'Fan hub' }
+        };
+        const explanations = {
+            q1: 'Материнская плата связывает все компоненты ПК, обеспечивая их взаимодействие.',
+            q2: 'Процессор (CPU) называют "мозгом" компьютера, так как он выполняет все вычисления.',
+            q3: 'DDR5 не совместим с DDR4 из-за различий в разъёмах и характеристиках.',
+            q4: 'Дискретная видеокарта обязательна для игр, 3D-графики и монтажа видео.',
+            q5: 'Для средней игровой сборки рекомендуется блок питания мощностью 500–850 Вт.',
+            q6: 'SSD быстрее и тише по сравнению с HDD благодаря отсутствию движущихся частей.',
+            q7: 'Mini-ITX — самый компактный форм-фактор корпуса.',
+            q8: 'Антистатический браслет предотвращает повреждение компонентов статическим током.',
+            q9: 'Первый шаг сборки — установка процессора на материнскую плату.',
+            q10: 'При входе в BIOS/UEFI проверяется распознавание всех компонентов системы.',
+            q11: 'Чипсет Z690 (и Z790) от Intel поддерживает разгон процессоров.',
+            q12: '80 PLUS Gold обеспечивает высокую эффективность блока питания.',
+            q13: 'CrystalDiskMark используется для тестирования скорости SSD.',
+            q14: 'Пассивное охлаждение подходит для безвентиляторных систем.',
+            q15: 'DisplayPort используется для подключения мониторов с высоким разрешением.',
+            q16: 'Управление кабелями улучшает циркуляцию воздуха в корпусе.',
+            q17: 'Дешёвый блок питания может привести к выходу из строя видеокарты.',
+            q18: 'ECC-память рекомендуется для серверных сборок из-за коррекции ошибок.',
+            q19: 'Для процессоров AMD оптимальна частота памяти 3200–6000 МГц.',
+            q20: 'Для 4K-гейминга требуется 16+ ГБ видеопамяти.',
+            q21: 'MemTest86 используется для проверки стабильности оперативной памяти.',
+            q22: '4/8-pin EPS — обязательный разъём питания для процессора.',
+            q23: 'Перетянутые винты могут повредить материнскую плату при сборке.',
+            q24: 'NVMe PCIe 4.0/5.0 обеспечивает скорость SSD до 12000 МБ/с.',
+            q25: 'ИБП (источник бесперебойного питания) защищает ПК от перепадов напряжения.'
+        };
+        const answers = {};
+
+        function startTest() {
+            document.querySelector('.intro').classList.remove('active');
+            currentQuestion = 1;
+            document.querySelector(`.question[data-question="${currentQuestion}"]`).classList.add('active');
+            document.querySelector('.buttons').classList.add('active');
+        }
+
+        function prevQuestion() {
+            if (currentQuestion > 1) {
+                document.querySelector(`.question[data-question="${currentQuestion}"]`).classList.remove('active');
+                currentQuestion--;
+                document.querySelector(`.question[data-question="${currentQuestion}"]`).classList.add('active');
+            }
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < totalQuestions) {
+                document.querySelector(`.question[data-question="${currentQuestion}"]`).classList.remove('active');
+                currentQuestion++;
+                document.querySelector(`.question[data-question="${currentQuestion}"]`).classList.add('active');
+            }
+        }
+
+        function finishTest() {
+            let score = 0;
+            for (let i = 1; i <= totalQuestions; i++) {
+                const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                if (selected) {
+                    answers[`q${i}`] = selected.value;
+                    if (selected.value === correctAnswers[`q${i}`]) {
+                        score++;
+                    }
+                }
+            }
+
+            document.querySelector(`.question[data-question="${currentQuestion}"]`).classList.remove('active');
+            document.querySelector('.buttons').classList.remove('active');
+            document.querySelector('.results').classList.add('active');
+            document.getElementById('score').innerText = `Вы набрали ${score} из ${totalQuestions} баллов!`;
+
+            const resultsTable = document.getElementById('resultsTable');
+            resultsTable.innerHTML = '';
+            for (let i = 1; i <= totalQuestions; i++) {
+                const row = document.createElement('tr');
+                const questionCell = document.createElement('td');
+                const userAnswerCell = document.createElement('td');
+                const correctAnswerCell = document.createElement('td');
+                const statusCell = document.createElement('td');
+                const explanationCell = document.createElement('td');
+
+                questionCell.innerText = questionsText[`q${i}`];
+                const userAnswer = answers[`q${i}`] || 'Не отвечено';
+                userAnswerCell.innerText = optionsText[`q${i}`][userAnswer] || 'Не отвечено';
+                correctAnswerCell.innerText = optionsText[`q${i}`][correctAnswers[`q${i}`]];
+                statusCell.innerText = userAnswer === correctAnswers[`q${i}`] ? 'Правильно' : 'Неправильно';
+                statusCell.className = userAnswer === correctAnswers[`q${i}`] ? 'correct' : 'incorrect';
+                explanationCell.innerText = explanations[`q${i}`];
+
+                row.appendChild(questionCell);
+                row.appendChild(userAnswerCell);
+                row.appendChild(correctAnswerCell);
+                row.appendChild(statusCell);
+                row.appendChild(explanationCell);
+                resultsTable.appendChild(row);
+            }
+        }
+
+        function restartTest() {
+            currentQuestion = 0;
+            document.querySelector('.results').classList.remove('active');
+            document.querySelector('.intro').classList.add('active');
+            document.querySelector('.buttons').classList.remove('active');
+            document.querySelectorAll('input[type="radio"]').forEach(input => input.checked = false);
+        }
+    </script>
+</body>
+</html>

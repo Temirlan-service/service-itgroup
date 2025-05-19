@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест по разборке и сборке картриджей</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; }
+        .quiz-container { max-width: 800px; margin: auto; }
+        .question { margin-bottom: 20px; }
+        .options label { display: block; margin: 10px 0; }
+        .buttons { margin-top: 20px; }
+        .result-table { margin-top: 20px; border-collapse: collapse; width: 100%; }
+        .result-table th, .result-table td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        .correct { color: green; }
+        .incorrect { color: red; }
+    </style>
+</head>
+<body>
+    <div class="quiz-container">
+        <h1>Тест по уроку</h1>
+        <p>День 3: Разборка и сборка картриджей. Проверьте свои знания!</p>
+        <p><strong>Не подсматривайте ответы в интернете, НАДЗИРАТЕЛЬ наблюдает!</strong></p>
+        <button onclick="startQuiz()">Начать тест</button>
+
+        <div id="quiz" style="display: none;">
+            <div class="question" id="question-1">
+                <h3>1. Что нужно использовать для защиты при разборке картриджа?</h3>
+                <div class="options">
+                    <label><input type="radio" name="q1" value="A"> A) Перчатки и маску</label>
+                    <label><input type="radio" name="q1" value="B"> B) Очки и наушники</label>
+                    <label><input type="radio" name="q1" value="C"> C) Респиратор и халат</label>
+                    <label><input type="radio" name="q1" value="D"> D) Защитный костюм</label>
+                </div>
+            </div>
+
+            <div class="question" id="question-2" style="display: none;">
+                <h3>2. Где находятся штифты в большинстве картриджей?</h3>
+                <div class="options">
+                    <label><input type="radio" name="q2" value="A"> A) На верхней крышке</label>
+                    <label><input type="radio" name="q2" value="B"> B) Внутри бункера</label>
+                    <label><input type="radio" name="q2" value="C"> C) По бокам</label>
+                    <label><input type="radio" name="q2" value="D"> D) На нижней части</label>
+                </div>
+            </div>
+
+            <div class="question" id="question-3" style="display: none;">
+                <h3>3. На какие части разделяется картридж при разборке?</h3>
+                <div class="options">
+                    <label><input type="radio" name="q3" value="A"> A) Отсек с валом и отсек с ракелем</label>
+                    <label><input type="radio" name="q3" value="B"> B) Отсек с чернилами и отсек с тонером</label>
+                    <label><input type="radio" name="q3" value="C"> C) Отсек с чипом и отсек с магнитом</label>
+                    <label><input type="radio" name="q3" value="D"> D) Отсек с тонером и отсек с фотобарабаном</label>
+                </div>
+            </div>
+
+            <div class="question" id="question-4" style="display: none;">
+                <h3>4. Почему фотобарабан чувствителен к свету?</h3>
+                <div class="options">
+                    <label><input type="radio" name="q4" value="A"> A) Нагревается и плавится</label>
+                    <label><input type="radio" name="q4" value="B"> B) Свет повреждает его поверхность</label>
+                    <label><input type="radio" name="q4" value="C"> C) Теряет заряд</label>
+                    <label><input type="radio" name="q4" value="D"> D) Покрывается пылью</label>
+                </div>
+            </div>
+
+            <div class="question" id="question-5" style="display: none;">
+                <h3>5. Чем протирают контактные площадки картриджа?</h3>
+                <div class="options">
+                    <label><input type="radio" name="q5" value="A"> A) Водой</label>
+                    <label><input type="radio" name="q5" value="B"> B) Ацетоном</label>
+                    <label><input type="radio" name="q5" value="C"> C) Изопропиловым спиртом</label>
+                    <label><input type="radio" name="q5" value="D"> D) Медицинским спиртом</label>
+                </div>
+            </div>
+
+            <div class="question" id="question-6" style="display: none;">
+                <h3>6. Куда высыпают остатки старого тонера?</h3>
+                <div class="options">
+                    <label><input type="radio" name="q6" value="A"> A) В мусор</label>
+                    <label><input type="radio" name="q6" value="B"> B) В контейнер для утилизации</label>
+                    <label><input type="radio" name="q6" value="C"> C) Оставляют в бункере</label>
+                    <label><input type="radio" name="q6" value="D"> D) Протирают водой</label>
+                </div>
+            </div>
+
+            <div class="question" id="question-7" style="display: none;">
+                <h3>7. Какой инструмент нужен для выталкивания штифтов?</h3>
+                <div class="options">
+                    <label><input type="radio" name="q7" value="A"> A) Молоток</label>
+                    <label><input type="radio" name="q7" value="B"> B) Нож</label>
+                    <label><input type="radio" name="q7" value="C"> C) Шило</label>
+                    <label><input type="radio" name="q7" value="D"> D) Пинцет</label>
+                </div>
+            </div>
+
+            <div class="question" id="question-8" style="display: none;">
+                <h3>8. Почему важен совместимый тонер?</h3>
+                <div class="options">
+                    <label><input type="radio" name="q8" value="A"> A) Он дешевле</label>
+                    <label><input type="radio" name="q8" value="B"> B) Легче засыпается</label>
+                    <label><input type="radio" name="q8" value="C"> C) Не требует очистки</label>
+                    <label><input type="radio" name="q8" value="D"> D) Разный состав влияет на печать</label>
+                </div>
+            </div>
+
+            <div class="question" id="question-9" style="display: none;">
+                <h3>9. Что делают перед заправкой тонера?</h3>
+                <div class="options">
+                    <label><input type="radio" name="q9" value="A"> A) Устанавливают фотобарабан</label>
+                    <label><input type="radio" name="q9" value="B"> B) Проверяют чип</label>
+                    <label><input type="radio" name="q9" value="C"> C) Очищают бункер от старого тонера</label>
+                    <label><input type="radio" name="q9" value="D"> D) Протирают ракель водой</label>
+                </div>
+            </div>
+
+            <div class="question" id="question-10" style="display: none;">
+                <h3>10. Как открывают заправочное отверстие?</h3>
+                <div class="options">
+                    <label><input type="radio" name="q10" value="A"> A) Снимают заглушку или разбирают</label>
+                    <label><input type="radio" name="q10" value="B"> B) Разрезают корпус</label>
+                    <label><input type="radio" name="q10" value="C"> C) Нагревают картридж</label>
+                    <label><input type="radio" name="q10" value="D"> D) Встряхивают картридж</label>
+                </div>
+            </div>
+
+            <div class="question" id="question-11" style="display: none;">
+                <h3>11. Чем удаляют остатки тонера из бункера?</h3>
+                <div class="options">
+                    <label><input type="radio" name="q11" value="A"> A) Влажной тряпкой</label>
+                    <label><input type="radio" name="q11" value="B"> B) Пылесосом</label>
+                    <label><input type="radio" name="q11" value="C"> C) Спиртом</label>
+                    <label><input type="radio" name="q11" value="D"> D) Кистью или компрессором</label>
+                </div>
+            </div>
+
+            <div class="question" id="question-12" style="display: none;">
+                <h3>12. Что вызывает полосы после заправки?</h3>
+                <div class="options">
+                    <label><input type="radio" name="q12" value="A"> A) Установка нового чипа</label>
+                    <label><input type="radio" name="q12" value="B"> B) Загрязнение дозирующего лезвия</label>
+                    <label><input type="radio" name="q12" value="C"> C) Использование воды для очистки</label>
+                    <label><input type="radio" name="q12" value="D"> D) Слишком много тонера</label>
+                </div>
+            </div>
+
+            <div class="question" id="question-13" style="display: none;">
+                <h3>13. Какой инструмент используют для засыпки тонера?</h3>
+                <div class="options">
+                    <label><input type="radio" name="q13" value="A"> A) Воронка</label>
+                    <label><input type="radio" name="q13" value="B"> B) Ложка</label>
+                    <label><input type="radio" name="q13" value="C"> C) Пинцет</label>
+                    <label><input type="radio" name="q13" value="D"> D) Кисть</label>
+                </div>
+            </div>
+
+            <div class="question" id="question-14" style="display: none;">
+                <h3>14. Что проверяют после сборки картриджа?</h3>
+                <div class="options">
+                    <label><input type="radio" name="q14" value="A"> A) Цвет тонера</label>
+                    <label><input type="radio" name="q14" value="B"> B) Вес картриджа</label>
+                    <label><input type="radio" name="q14" value="C"> C) Плавность хода подвижных частей</label>
+                    <label><input type="radio" name="q14" value="D"> D) Температуру корпуса</label>
+                </div>
+            </div>
+
+            <div class="question" id="question-15" style="display: none;">
+                <h3>15. Что делают после установки картриджа в принтер?</h3>
+                <div class="options">
+                    <label><input type="radio" name="q15" value="A"> A) Перезагружают принтер</label>
+                    <label><input type="radio" name="q15" value="B"> B) Проверяют чип</label>
+                    <label><input type="radio" name="q15" value="C"> C) Очищают принтер</label>
+                    <label><input type="radio" name="q15" value="D"> D) Печатают тестовую страницу</label>
+                </div>
+            </div>
+
+            <div class="question" id="question-16" style="display: none;">
+                <h3>16. Какие дефекты указывают на проблемы с фотобарабаном?</h3>
+                <div class="options">
+                    <label><input type="radio" name="q16" value="A"> A) Бледные участки</label>
+                    <label><input type="radio" name="q16" value="B"> B) Чёрные полосы</label>
+                    <label><input type="radio" name="q16" value="C"> C) Пятна и пробелы</label>
+                    <label><input type="radio" name="q16" value="D"> D) Размытый текст</label>
+                </div>
+            </div>
+
+            <div class="question" id="question-17" style="display: none;">
+                <h3>17. Какой компонент проверяют при бледной печати?</h3>
+                <div class="options">
+                    <label><input type="radio" name="q17" value="A"> A) Штифты</label>
+                    <label><input type="radio" name="q17" value="B"> B) Магнитный вал</label>
+                    <label><input type="radio" name="q17" value="C"> C) Вал заряда</label>
+                    <label><input type="radio" name="q17" value="D"> D) Корпус</label>
+                </div>
+            </div>
+
+            <div class="question" id="question-18" style="display: none;">
+                <h3>18. С чего начинается сборка картриджа?</h3>
+                <div class="options">
+                    <label><input type="radio" name="q18" value="A"> A) Установка фотобарабана</label>
+                    <label><input type="radio" name="q18" value="B"> B) Установка штифтов</label>
+                    <label><input type="radio" name="q18" value="C"> C) Очистка бункера</label>
+                    <label><input type="radio" name="q18" value="D"> D) Проверка чипа</label>
+                </div>
+            </div>
+
+            <div class="question" id="question-19" style="display: none;">
+                <h3>19. Чем очищают дозирующее лезвие?</h3>
+                <div class="options">
+                    <label><input type="radio" name="q19" value="A"> A) Водой</label>
+                    <label><input type="radio" name="q19" value="B"> B) Ацетоном</label>
+                    <label><input type="radio" name="q19" value="C"> C) Сухой тряпкой</label>
+                    <label><input type="radio" name="q19" value="D"> D) Мягкой салфеткой и спиртом</label>
+                </div>
+            </div>
+
+            <div class="question" id="question-20" style="display: none;">
+                <h3>20. Какой картридж подходит для HP LaserJet?</h3>
+                <div class="options">
+                    <label><input type="radio" name="q20" value="A"> A) MLT-D101S</label>
+                    <label><input type="radio" name="q20" value="B"> B) SAMSUNG-101</label>
+                    <label><input type="radio" name="q20" value="C"> C) CF283A</label>
+                    <label><input type="radio" name="q20" value="D"> D) HP-244</label>
+                </div>
+            </div>
+
+            <div class="question" id="question-21" style="display: none;">
+                <h3>21. Как разбирают картридж CF283A?</h3>
+                <div class="options">
+                    <label><input type="radio" name="q21" value="A"> A) Разрезают корпус</label>
+                    <label><input type="radio" name="q21" value="B"> B) Откручивают бункер</label>
+                    <label><input type="radio" name="q21" value="C"> C) Удаляют верхнюю крышку</label>
+                    <label><input type="radio" name="q21" value="D"> D) Снимают боковые крышки и штифты</label>
+                </div>
+            </div>
+
+            <div class="question" id="question-22" style="display: none;">
+                <h3>22. Чем отличается разборка MLT-D101S от CF283A?</h3>
+                <div class="options">
+                    <label><input type="radio" name="q22" value="A"> A) Отсутствием штифтов</label>
+                    <label><input type="radio" name="q22" value="B"> B) Креплениями боковых крышек</label>
+                    <label><input type="radio" name="q22" value="C"> C) Размером фотобарабана</label>
+                    <label><input type="radio" name="q22" value="D"> D) Типом тонера</label>
+                </div>
+            </div>
+
+            <div class="question" id="question-23" style="display: none;">
+                <h3>23. Что проверяют в MLT-D101S при заправке?</h3>
+                <div class="options">
+                    <label><input type="radio" name="q23" value="A"> A) Состояние чипа</label>
+                    <label><input type="radio" name="q23" value="B"> B) Цвет тонера</label>
+                    <label><input type="radio" name="q23" value="C"> C) Вес картриджа</label>
+                    <label><input type="radio" name="q23" value="D"> D) Состояние ракеля</label>
+                </div>
+            </div>
+
+            <div class="question" id="question-24" style="display: none;">
+                <h3>24. Что делают после засыпки тонера?</h3>
+                <div class="options">
+                    <label><input type="radio" name="q24" value="A"> A) Встряхивают картридж</label>
+                    <label><input type="radio" name="q24" value="B"> B) Устанавливают чип</label>
+                    <label><input type="radio" name="q24" value="C"> C) Закрывают отверстие и проверяют герметичность</label>
+                    <label><input type="radio" name="q24" value="D"> D) Протирают корпус</label>
+                </div>
+            </div>
+
+            <div class="question" id="question-25" style="display: none;">
+                <h3>25. В каком помещении разбирают картридж?</h3>
+                <div class="options">
+                    <label><input type="radio" name="q25" value="A"> A) Тёмном</label>
+                    <label><input type="radio" name="q25" value="B"> B) Влажном</label>
+                    <label><input type="radio" name="q25" value="C"> C) Тёплом</label>
+                    <label><input type="radio" name="q25" value="D"> D) Хорошо проветриваемом</label>
+                </div>
+            </div>
+
+            <div class="buttons">
+                <button onclick="prevQuestion()">Предыдущий вопрос</button>
+                <button onclick="nextQuestion()">Следующий вопрос</button>
+                <button onclick="finishQuiz()">Завершить тест</button>
+            </div>
+        </div>
+
+        <div id="results" style="display: none;">
+            <h2>Результаты теста</h2>
+            <table class="result-table">
+                <tr>
+                    <th>Вопрос</th>
+                    <th>Ваш ответ</th>
+                    <th>Правильный ответ</th>
+                    <th>Статус</th>
+                    <th>Объяснение</th>
+                </tr>
+                <tr>
+                    <td>1. Что нужно использовать для защиты при разборке картриджа?</td>
+                    <td id="user-answer-1"></td>
+                    <td>A</td>
+                    <td id="status-1"></td>
+                    <td>Перчатки и маска защищают от мелкодисперсного тонера, вредного для дыхания.</td>
+                </tr>
+                <tr>
+                    <td>2. Где находятся штифты в большинстве картриджей?</td>
+                    <td id="user-answer-2"></td>
+                    <td>C</td>
+                    <td id="status-2"></td>
+                    <td>Штифты обычно расположены по бокам картриджа.</td>
+                </tr>
+                <tr>
+                    <td>3. На какие части разделяется картридж при разборке?</td>
+                    <td id="user-answer-3"></td>
+                    <td>D</td>
+                    <td id="status-3"></td>
+                    <td>Картридж разделяется на отсек с тонером и отсек с фотобарабаном.</td>
+                </tr>
+                <tr>
+                    <td>4. Почему фотобарабан чувствителен к свету?</td>
+                    <td id="user-answer-4"></td>
+                    <td>B</td>
+                    <td id="status-4"></td>
+                    <td>Свет может повредить поверхность фотобарабана.</td>
+                </tr>
+                <tr>
+                    <td>5. Чем протирают контактные площадки картриджа?</td>
+                    <td id="user-answer-5"></td>
+                    <td>C</td>
+                    <td id="status-5"></td>
+                    <td>Изопропиловый спирт (99%) эффективно очищает контактные площадки.</td>
+                </tr>
+                <tr>
+                    <td>6. Куда высыпают остатки старого тонера?</td>
+                    <td id="user-answer-6"></td>
+                    <td>B</td>
+                    <td id="status-6"></td>
+                    <td>Остатки тонера высыпают в контейнер для утилизации.</td>
+                </tr>
+                <tr>
+                    <td>7. Какой инструмент нужен для выталкивания штифтов?</td>
+                    <td id="user-answer-7"></td>
+                    <td>D</td>
+                    <td id="status-7"></td>
+                    <td>Пинцет или тонкий стержень подходит для выталкивания штифтов.</td>
+                </tr>
+                <tr>
+                    <td>8. Почему важен совместимый тонер?</td>
+                    <td id="user-answer-8"></td>
+                    <td>D</td>
+                    <td id="status-8"></td>
+                    <td>Разный химический состав тонера может вызвать дефекты печати.</td>
+                </tr>
+                <tr>
+                    <td>9. Что делают перед заправкой тонера?</td>
+                    <td id="user-answer-9"></td>
+                    <td>C</td>
+                    <td id="status-9"></td>
+                    <td>Бункер очищают от старого тонера, чтобы избежать смешивания составов.</td>
+                </tr>
+                <tr>
+                    <td>10. Как открывают заправочное отверстие?</td>
+                    <td id="user-answer-10"></td>
+                    <td>A</td>
+                    <td id="status-10"></td>
+                    <td>Заправочное отверстие открывают, снимая заглушку или разбирая картридж.</td>
+                </tr>
+                <tr>
+                    <td>11. Чем удаляют остатки тонера из бункера?</td>
+                    <td id="user-answer-11"></td>
+                    <td>D</td>
+                    <td id="status-11"></td>
+                    <td>Кисть или компрессор эффективно удаляют тонер из бункера.</td>
+                </tr>
+                <tr>
+                    <td>12. Что вызывает полосы после заправки?</td>
+                    <td id="user-answer-12"></td>
+                    <td>B</td>
+                    <td id="status-12"></td>
+                    <td>Загрязнение дозирующего лезвия может вызвать полосы.</td>
+                </tr>
+                <tr>
+                    <td>13. Какой инструмент используют для засыпки тонера?</td>
+                    <td id="user-answer-13"></td>
+                    <td>A</td>
+                    <td id="status-13"></td>
+                    <td>Воронка помогает равномерно засыпать тонер.</td>
+                </tr>
+                <tr>
+                    <td>14. Что проверяют после сборки картриджа?</td>
+                    <td id="user-answer-14"></td>
+                    <td>C</td>
+                    <td id="status-14"></td>
+                    <td>Проверяется плавность хода подвижных частей.</td>
+                </tr>
+                <tr>
+                    <td>15. Что делают после установки картриджа в принтер?</td>
+                    <td id="user-answer-15"></td>
+                    <td>D</td>
+                    <td id="status-15"></td>
+                    <td>Печатают тестовую страницу для проверки качества.</td>
+                </tr>
+                <tr>
+                    <td>16. Какие дефекты указывают на проблемы с фотобарабаном?</td>
+                    <td id="user-answer-16"></td>
+                    <td>C</td>
+                    <td id="status-16"></td>
+                    <td>Пятна и пробелы указывают на повреждение фотобарабана.</td>
+                </tr>
+                <tr>
+                    <td>17. Какой компонент проверяют при бледной печати?</td>
+                    <td id="user-answer-17"></td>
+                    <td>B</td>
+                    <td id="status-17"></td>
+                    <td>Магнитный вал влияет на подачу тонера и может вызывать бледность.</td>
+                </tr>
+                <tr>
+                    <td>18. С чего начинается сборка картриджа?</td>
+                    <td id="user-answer-18"></td>
+                    <td>A</td>
+                    <td id="status-18"></td>
+                    <td>Сборка начинается с установки фотобарабана.</td>
+                </tr>
+                <tr>
+                    <td>19. Чем очищают дозирующее лезвие?</td>
+                    <td id="user-answer-19"></td>
+                    <td>D</td>
+                    <td id="status-19"></td>
+                    <td>Дозирующее лезвие протирают мягкой салфеткой и спиртом.</td>
+                </tr>
+                <tr>
+                    <td>20. Какой картридж подходит для HP LaserJet?</td>
+                    <td id="user-answer-20"></td>
+                    <td>C</td>
+                    <td id="status-20"></td>
+                    <td>CF283A используется в принтерах HP LaserJet.</td>
+                </tr>
+                <tr>
+                    <td>21. Как разбирают картридж CF283A?</td>
+                    <td id="user-answer-21"></td>
+                    <td>D</td>
+                    <td id="status-21"></td>
+                    <td>Картридж CF283A разбирается снятием боковых крышек и штифтов.</td>
+                </tr>
+                <tr>
+                    <td>22. Чем отличается разборка MLT-D101S от CF283A?</td>
+                    <td id="user-answer-22"></td>
+                    <td>B</td>
+                    <td id="status-22"></td>
+                    <td>MLT-D101S отличается креплениями боковых крышек.</td>
+                </tr>
+                <tr>
+                    <td>23. Что проверяют в MLT-D101S при заправке?</td>
+                    <td id="user-answer-23"></td>
+                    <td>D</td>
+                    <td id="status-23"></td>
+                    <td>Состояние ракеля важно для качества печати.</td>
+                </tr>
+                <tr>
+                    <td>24. Что делают после засыпки тонера?</td>
+                    <td id="user-answer-24"></td>
+                    <td>C</td>
+                    <td id="status-24"></td>
+                    <td>Закрывают отверстие и проверяют герметичность для предотвращения утечек.</td>
+                </tr>
+                <tr>
+                    <td>25. В каком помещении разбирают картридж?</td>
+                    <td id="user-answer-25"></td>
+                    <td>D</td>
+                    <td id="status-25"></td>
+                    <td>Хорошо проветриваемое помещение предотвращает вдыхание тонера.</td>
+                </tr>
+            </table>
+            <button onclick="restartQuiz()">Пройти тест заново</button>
+        </div>
+    </div>
+
+    <script>
+        let currentQuestion = 1;
+        const totalQuestions = 25;
+        let answers = {};
+
+        function startQuiz() {
+            document.getElementById('quiz').style.display = 'block';
+            document.querySelector('button[onclick="startQuiz()"]').style.display = 'none';
+            showQuestion(currentQuestion);
+        }
+
+        function showQuestion(n) {
+            for (let i = 1; i <= totalQuestions; i++) {
+                document.getElementById(`question-${i}`).style.display = i === n ? 'block' : 'none';
+            }
+        }
+
+        function prevQuestion() {
+            if (currentQuestion > 1) {
+                saveAnswer();
+                currentQuestion--;
+                showQuestion(currentQuestion);
+            }
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < totalQuestions) {
+                saveAnswer();
+                currentQuestion++;
+                showQuestion(currentQuestion);
+            }
+        }
+
+        function saveAnswer() {
+            const selected = document.querySelector(`input[name="q${currentQuestion}"]:checked`);
+            if (selected) {
+                answers[currentQuestion] = selected.value;
+            }
+        }
+
+        function finishQuiz() {
+            saveAnswer();
+            document.getElementById('quiz').style.display = 'none';
+            document.getElementById('results').style.display = 'block';
+            displayResults();
+        }
+
+        function displayResults() {
+            for (let i = 1; i <= totalQuestions; i++) {
+                const userAnswer = answers[i] || 'Не отвечено';
+                const correctAnswer = document.querySelector(`#status-${i}`).previousElementSibling.textContent;
+                const status = userAnswer === correctAnswer ? 'Правильно' : 'Неправильно';
+                document.getElementById(`user-answer-${i}`).textContent = userAnswer;
+                document.getElementById(`status-${i}`).textContent = status;
+                document.getElementById(`status-${i}`).className = status === 'Правильно' ? 'correct' : 'incorrect';
+            }
+        }
+
+        function restartQuiz() {
+            currentQuestion = 1;
+            answers = {};
+            for (let i = 1; i <= totalQuestions; i++) {
+                const radios = document.querySelectorAll(`input[name="q${i}"]`);
+                radios.forEach(radio => radio.checked = false);
+                document.getElementById(`user-answer-${i}`).textContent = '';
+                document.getElementById(`status-${i}`).textContent = '';
+                document.getElementById(`status-${i}`).className = '';
+            }
+            document.getElementById('quiz').style.display = 'block';
+            document.getElementById('results').style.display = 'none';
+            showQuestion(currentQuestion);
+        }
+    </script>
+</body>
+</html>

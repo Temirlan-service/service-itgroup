@@ -1,0 +1,502 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест по жёстким дискам и SSD</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+            text-align: center;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1, h2 {
+            color: #333;
+        }
+        .intro, .question, .results {
+            display: none;
+        }
+        .intro.active, .question.active, .results.active {
+            display: block;
+        }
+        .question label {
+            display: block;
+            margin: 10px 0;
+            font-size: 16px;
+        }
+        .buttons {
+            margin-top: 20px;
+            display: none;
+        }
+        .buttons.active {
+            display: block;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007BFF;
+            color: #fff;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        input[type="radio"] {
+            margin-right: 10px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .correct {
+            color: green;
+        }
+        .incorrect {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Вводная страница -->
+        <div class="intro active">
+            <h1>Тест по уроку</h1>
+            <p>Жёсткие диски и SSD: виды, различия и особенности, проверьте свои знания. Желаю удачи!</p>
+            <p>Не подсматривайте ответы в интернете, НАДЗИРАТЕЛЬ наблюдает!</p>
+            <button onclick="startTest()">Начать тест</button>
+        </div>
+
+        <!-- Вопросы -->
+        <div class="question" data-question="1">
+            <h2>1. Какой основной компонент HDD отвечает за чтение и запись данных?</h2>
+            <label><input type="radio" name="q1" value="a"> Магнитные пластины</label>
+            <label><input type="radio" name="q1" value="b"> Магнитная головка</label>
+            <label><input type="radio" name="q1" value="c"> Контроллер</label>
+            <label><input type="radio" name="q1" value="d"> Флеш-память</label>
+        </div>
+        <div class="question" data-question="2">
+            <h2>2. Какова типичная скорость вращения пластин в HDD?</h2>
+            <label><input type="radio" name="q2" value="a"> 1200–2400 об/мин</label>
+            <label><input type="radio" name="q2" value="b"> 5400–7200 об/мин</label>
+            <label><input type="radio" name="q2" value="c"> 10000–15000 об/мин</label>
+            <label><input type="radio" name="q2" value="d"> 20000 об/мин</label>
+        </div>
+        <div class="question" data-question="3">
+            <h2>3. Какое преимущество HDD делает его популярным для хранения больших объёмов данных?</h2>
+            <label><input type="radio" name="q3" value="a"> Высокая скорость</label>
+            <label><input type="radio" name="q3" value="b"> Низкая цена за ГБ</label>
+            <label><input type="radio" name="q3" value="c"> Отсутствие шума</label>
+            <label><input type="radio" name="q3" value="d"> Устойчивость к ударам</label>
+        </div>
+        <div class="question" data-question="4">
+            <h2>4. Почему HDD более уязвимы к физическим повреждениям, чем SSD?</h2>
+            <label><input type="radio" name="q4" value="a"> Используют флеш-память</label>
+            <label><input type="radio" name="q4" value="b"> Имеют подвижные части</label>
+            <label><input type="radio" name="q4" value="c"> Высокое энергопотребление</label>
+            <label><input type="radio" name="q4" value="d"> Ограниченные циклы записи</label>
+        </div>
+        <div class="question" data-question="5">
+            <h2>5. Какой форм-фактор HDD чаще используется в ноутбуках?</h2>
+            <label><input type="radio" name="q5" value="a"> 3.5"</label>
+            <label><input type="radio" name="q5" value="b"> 2.5"</label>
+            <label><input type="radio" name="q5" value="c"> M.2</label>
+            <label><input type="radio" name="q5" value="d"> mSATA</label>
+        </div>
+        <div class="question" data-question="6">
+            <h2>6. Какой интерфейс наиболее распространён для подключения HDD?</h2>
+            <label><input type="radio" name="q6" value="a"> PCIe</label>
+            <label><input type="radio" name="q6" value="b"> SATA III</label>
+            <label><input type="radio" name="q6" value="c"> NVMe</label>
+            <label><input type="radio" name="q6" value="d"> USB</label>
+        </div>
+        <div class="question" data-question="7">
+            <h2>7. Какой основной компонент SSD отвечает за управление данными?</h2>
+            <label><input type="radio" name="q7" value="a"> Магнитная головка</label>
+            <label><input type="radio" name="q7" value="b"> Контроллер</label>
+            <label><input type="radio" name="q7" value="c"> Магнитные пластины</label>
+            <label><input type="radio" name="q7" value="d"> Механический привод</label>
+        </div>
+        <div class="question" data-question="8">
+            <h2>8. Почему SSD работают тише, чем HDD?</h2>
+            <label><input type="radio" name="q8" value="a"> Используют меньшее напряжение</label>
+            <label><input type="radio" name="q8" value="b"> Отсутствуют подвижные части</label>
+            <label><input type="radio" name="q8" value="c"> Имеют меньший размер</label>
+            <label><input type="radio" name="q8" value="d"> Используют SATA интерфейс</label>
+        </div>
+        <div class="question" data-question="9">
+            <h2>9. Какое преимущество SSD особенно важно для игровых ПК?</h2>
+            <label><input type="radio" name="q9" value="a"> Низкая цена</label>
+            <label><input type="radio" name="q9" value="b"> Высокая скорость загрузки</label>
+            <label><input type="radio" name="q9" value="c"> Большой объём хранения</label>
+            <label><input type="radio" name="q9" value="d"> Механическая надёжность</label>
+        </div>
+        <div class="question" data-question="10">
+            <h2>10. Какой недостаток SSD ограничивает их использование для больших объёмов данных?</h2>
+            <label><input type="radio" name="q10" value="a"> Высокая цена за ГБ</label>
+            <label><input type="radio" name="q10" value="b"> Низкая скорость</label>
+            <label><input type="radio" name="q10" value="c"> Высокий уровень шума</label>
+            <label><input type="radio" name="q10" value="d"> Уязвимость к ударам</label>
+        </div>
+        <div class="question" data-question="11">
+            <h2>11. Какой тип SSD внешне похож на 2.5" HDD?</h2>
+            <label><input type="radio" name="q11" value="a"> M.2 NVMe</label>
+            <label><input type="radio" name="q11" value="b"> mSATA</label>
+            <label><input type="radio" name="q11" value="c"> SSD 2.5" SATA</label>
+            <label><input type="radio" name="q11" value="d"> M.2 SATA</label>
+        </div>
+        <div class="question" data-question="12">
+            <h2>12. Какой интерфейс используется в SSD 2.5" для подключения к материнской плате?</h2>
+            <label><input type="radio" name="q12" value="a"> PCIe</label>
+            <label><input type="radio" name="q12" value="b"> SATA III</label>
+            <label><input type="radio" name="q12" value="c"> NVMe</label>
+            <label><input type="radio" name="q12" value="d"> USB</label>
+        </div>
+        <div class="question" data-question="13">
+            <h2>13. Почему mSATA SSD считается устаревшим?</h2>
+            <label><input type="radio" name="q13" value="a"> Низкая надёжность</label>
+            <label><input type="radio" name="q13" value="b"> Заменён форматом M.2</label>
+            <label><input type="radio" name="q13" value="c"> Высокая цена</label>
+            <label><input type="radio" name="q13" value="d"> Низкая скорость</label>
+        </div>
+        <div class="question" data-question="14">
+            <h2>14. Какой форм-фактор чаще всего встречается у M.2 SATA SSD?</h2>
+            <label><input type="radio" name="q14" value="a"> 2230</label>
+            <label><input type="radio" name="q14" value="b"> 2280</label>
+            <label><input type="radio" name="q14" value="c"> 22110</label>
+            <label><input type="radio" name="q14" value="d"> 2.5"</label>
+        </div>
+        <div class="question" data-question="15">
+            <h2>15. Какой интерфейс обеспечивает максимальную скорость у M.2 NVMe SSD?</h2>
+            <label><input type="radio" name="q15" value="a"> SATA III</label>
+            <label><input type="radio" name="q15" value="b"> PCIe</label>
+            <label><input type="radio" name="q15" value="c"> USB</label>
+            <label><input type="radio" name="q15" value="d"> mSATA</label>
+        </div>
+        <div class="question" data-question="16">
+            <h2>16. Какую максимальную скорость может достигать M.2 NVMe SSD на PCIe Gen4?</h2>
+            <label><input type="radio" name="q16" value="a"> 550 МБ/с</label>
+            <label><input type="radio" name="q16" value="b"> 1000 МБ/с</label>
+            <label><input type="radio" name="q16" value="c"> 3500 МБ/с</label>
+            <label><input type="radio" name="q16" value="d"> 7000 МБ/с</label>
+        </div>
+        <div class="question" data-question="17">
+            <h2>17. Почему важно проверять совместимость M.2 слота перед установкой NVMe SSD?</h2>
+            <label><input type="radio" name="q17" value="a"> Разные размеры дисков</label>
+            <label><input type="radio" name="q17" value="b"> Слот может поддерживать только SATA</label>
+            <label><input type="radio" name="q17" value="c"> Высокое энергопотребление</label>
+            <label><input type="radio" name="q17" value="d"> Низкая надёжность</label>
+        </div>
+        <div class="question" data-question="18">
+            <h2>18. Какой тип накопителя имеет самую низкую цену за 1 ГБ?</h2>
+            <label><input type="radio" name="q18" value="a"> SSD 2.5" SATA</label>
+            <label><input type="radio" name="q18" value="b"> M.2 NVMe SSD</label>
+            <label><input type="radio" name="q18" value="c"> HDD</label>
+            <label><input type="radio" name="q18" value="d"> M.2 SATA SSD</label>
+        </div>
+        <div class="question" data-question="19">
+            <h2>19. Какой накопитель лучше всего подходит для долговременного хранения данных?</h2>
+            <label><input type="radio" name="q19" value="a"> SSD 2.5" SATA</label>
+            <label><input type="radio" name="q19" value="b"> M.2 NVMe SSD</label>
+            <label><input type="radio" name="q19" value="c"> HDD</label>
+            <label><input type="radio" name="q19" value="d"> mSATA SSD</label>
+        </div>
+        <div class="question" data-question="20">
+            <h2>20. Какой тип SSD рекомендуется для бюджетной сборки ПК?</h2>
+            <label><input type="radio" name="q20" value="a"> M.2 NVMe Gen4</label>
+            <label><input type="radio" name="q20" value="b"> SSD 2.5" SATA</label>
+            <label><input type="radio" name="q20" value="c"> mSATA SSD</label>
+            <label><input type="radio" name="q20" value="d"> M.2 NVMe Gen3</label>
+        </div>
+        <div class="question" data-question="21">
+            <h2>21. Какой накопитель обеспечивает наибольшую устойчивость к ударам?</h2>
+            <label><input type="radio" name="q21" value="a"> HDD</label>
+            <label><input type="radio" name="q21" value="b"> SSD (любой тип)</label>
+            <label><input type="radio" name="q21" value="c"> Только M.2 NVMe</label>
+            <label><input type="radio" name="q21" value="d"> Только mSATA</label>
+        </div>
+        <div class="question" data-question="22">
+            <h2>22. Какой комбинированный подход оптимален для большинства пользователей?</h2>
+            <label><input type="radio" name="q22" value="a"> SSD под систему + HDD под файлы</label>
+            <label><input type="radio" name="q22" value="b"> Только HDD</label>
+            <label><input type="radio" name="q22" value="c"> Только SSD</label>
+            <label><input type="radio" name="q22" value="d"> HDD под систему + SSD под файлы</label>
+        </div>
+        <div class="question" data-question="23">
+            <h2>23. Какой тип SSD экономит место благодаря отсутствию кабелей?</h2>
+            <label><input type="radio" name="q23" value="a"> SSD 2.5" SATA</label>
+            <label><input type="radio" name="q23" value="b"> M.2 (SATA или NVMe)</label>
+            <label><input type="radio" name="q23" value="c"> mSATA SSD</label>
+            <label><input type="radio" name="q23" value="d"> HDD</label>
+        </div>
+        <div class="question" data-question="24">
+            <h2>24. Почему SSD имеют ограниченное количество циклов перезаписи?</h2>
+            <label><input type="radio" name="q24" value="a"> Используют механические части</label>
+            <label><input type="radio" name="q24" value="b"> Из-за флеш-памяти NAND</label>
+            <label><input type="radio" name="q24" value="c"> Высокое энергопотребление</label>
+            <label><input type="radio" name="q24" value="d"> Низкая совместимость</label>
+        </div>
+        <div class="question" data-question="25">
+            <h2>25. Какой навык важен для сервисного специалиста при выборе накопителя?</h2>
+            <label><input type="radio" name="q25" value="a"> Знание интерфейсов и совместимости</label>
+            <label><input type="radio" name="q25" value="b"> Умение паять платы</label>
+            <label><input type="radio" name="q25" value="c"> Навыки работы с антивирусами</label>
+            <label><input type="radio" name="q25" value="d"> Знание сетевых протоколов</label>
+        </div>
+
+        <!-- Кнопки навигации -->
+        <div class="buttons">
+            <button onclick="prevQuestion()">Предыдущий вопрос</button>
+            <button onclick="nextQuestion()">Следующий вопрос</button>
+            <button onclick="finishTest()">Завершить тест</button>
+        </div>
+
+        <!-- Результаты -->
+        <div class="results">
+            <h2>Результаты теста</h2>
+            <p id="score"></p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Вопрос</th>
+                        <th>Ваш ответ</th>
+                        <th>Правильный ответ</th>
+                        <th>Статус</th>
+                        <th>Объяснение</th>
+                    </tr>
+                </thead>
+                <tbody id="resultsTable"></tbody>
+            </table>
+            <button onclick="restartTest()">Пройти тест заново</button>
+        </div>
+    </div>
+
+    <script>
+        let currentQuestion = 0;
+        const totalQuestions = 25;
+        const correctAnswers = {
+            q1: 'b', q2: 'b', q3: 'b', q4: 'b', q5: 'b',
+            q6: 'b', q7: 'b', q8: 'b', q9: 'b', q10: 'a',
+            q11: 'c', q12: 'b', q13: 'b', q14: 'b', q15: 'b',
+            q16: 'd', q17: 'b', q18: 'c', q19: 'c', q20: 'b',
+            q21: 'b', q22: 'a', q23: 'b', q24: 'b', q25: 'a'
+        };
+        const questionsText = {
+            q1: 'Какой основной компонент HDD отвечает за чтение и запись данных?',
+            q2: 'Какова типичная скорость вращения пластин в HDD?',
+            q3: 'Какое преимущество HDD делает его популярным для хранения больших объёмов данных?',
+            q4: 'Почему HDD более уязвимы к физическим повреждениям, чем SSD?',
+            q5: 'Какой форм-фактор HDD чаще используется в ноутбуках?',
+            q6: 'Какой интерфейс наиболее распространён для подключения HDD?',
+            q7: 'Какой основной компонент SSD отвечает за управление данными?',
+            q8: 'Почему SSD работают тише, чем HDD?',
+            q9: 'Какое преимущество SSD особенно важно для игровых ПК?',
+            q10: 'Какой недостаток SSD ограничивает их использование для больших объёмов данных?',
+            q11: 'Какой тип SSD внешне похож на 2.5" HDD?',
+            q12: 'Какой интерфейс используется в SSD 2.5" для подключения к материнской плате?',
+            q13: 'Почему mSATA SSD считается устаревшим?',
+            q14: 'Какой форм-фактор чаще всего встречается у M.2 SATA SSD?',
+            q15: 'Какой интерфейс обеспечивает максимальную скорость у M.2 NVMe SSD?',
+            q16: 'Какую максимальную скорость может достигать M.2 NVMe SSD на PCIe Gen4?',
+            q17: 'Почему важно проверять совместимость M.2 слота перед установкой NVMe SSD?',
+            q18: 'Какой тип накопителя имеет самую низкую цену за 1 ГБ?',
+            q19: 'Какой накопитель лучше всего подходит для долговременного хранения данных?',
+            q20: 'Какой тип SSD рекомендуется для бюджетной сборки ПК?',
+            q21: 'Какой накопитель обеспечивает наибольшую устойчивость к ударам?',
+            q22: 'Какой комбинированный подход оптимален для большинства пользователей?',
+            q23: 'Какой тип SSD экономит место благодаря отсутствию кабелей?',
+            q24: 'Почему SSD имеют ограниченное количество циклов перезаписи?',
+            q25: 'Какой навык важен для сервисного специалиста при выборе накопителя?'
+        };
+        const optionsText = {
+            q1: { a: 'Магнитные пластины', b: 'Магнитная головка', c: 'Контроллер', d: 'Флеш-память' },
+            q2: { a: '1200–2400 об/мин', b: '5400–7200 об/мин', c: '10000–15000 об/мин', d: '20000 об/мин' },
+            q3: { a: 'Высокая скорость', b: 'Низкая цена за ГБ', c: 'Отсутствие шума', d: 'Устойчивость к ударам' },
+            q4: { a: 'Используют флеш-память', b: 'Имеют подвижные части', c: 'Высокое энергопотребление', d: 'Ограниченные циклы записи' },
+            q5: { a: '3.5"', b: '2.5"', c: 'M.2', d: 'mSATA' },
+            q6: { a: 'PCIe', b: 'SATA III', c: 'NVMe', d: 'USB' },
+            q7: { a: 'Магнитная головка', b: 'Контроллер', c: 'Магнитные пластины', d: 'Механический привод' },
+            q8: { a: 'Используют меньшее напряжение', b: 'Отсутствуют подвижные части', c: 'Имеют меньший размер', d: 'Используют SATA интерфейс' },
+            q9: { a: 'Низкая цена', b: 'Высокая скорость загрузки', c: 'Большой объём хранения', d: 'Механическая надёжность' },
+            q10: { a: 'Высокая цена за ГБ', b: 'Низкая скорость', c: 'Высокий уровень шума', d: 'Уязвимость к ударам' },
+            q11: { a: 'M.2 NVMe', b: 'mSATA', c: 'SSD 2.5" SATA', d: 'M.2 SATA' },
+            q12: { a: 'PCIe', b: 'SATA III', c: 'NVMe', d: 'USB' },
+            q13: { a: 'Низкая надёжность', b: 'Заменён форматом M.2', c: 'Высокая цена', d: 'Низкая скорость' },
+            q14: { a: '2230', b: '2280', c: '22110', d: '2.5"' },
+            q15: { a: 'SATA III', b: 'PCIe', c: 'USB', d: 'mSATA' },
+            q16: { a: '550 МБ/с', b: '1000 МБ/с', c: '3500 МБ/с', d: '7000 МБ/с' },
+            q17: { a: 'Разные размеры дисков', b: 'Слот может поддерживать только SATA', c: 'Высокое энергопотребление', d: 'Низкая надёжность' },
+            q18: { a: 'SSD 2.5" SATA', b: 'M.2 NVMe SSD', c: 'HDD', d: 'M.2 SATA SSD' },
+            q19: { a: 'SSD 2.5" SATA', b: 'M.2 NVMe SSD', c: 'HDD', d: 'mSATA SSD' },
+            q20: { a: 'M.2 NVMe Gen4', b: 'SSD 2.5" SATA', c: 'mSATA SSD', d: 'M.2 NVMe Gen3' },
+            q21: { a: 'HDD', b: 'SSD (любой тип)', c: 'Только M.2 NVMe', d: 'Только mSATA' },
+            q22: { a: 'SSD под систему + HDD под файлы', b: 'Только HDD', c: 'Только SSD', d: 'HDD под систему + SSD под файлы' },
+            q23: { a: 'SSD 2.5" SATA', b: 'M.2 (SATA или NVMe)', c: 'mSATA SSD', d: 'HDD' },
+            q24: { a: 'Используют механические части', b: 'Из-за флеш-памяти NAND', c: 'Высокое энергопотребление', d: 'Низкая совместимость' },
+            q25: { a: 'Знание интерфейсов и совместимости', b: 'Умение паять платы', c: 'Навыки работы с антивирусами', d: 'Знание сетевых протоколов' }
+        };
+        const explanations = {
+            q1: 'Магнитная головка считывает и записывает данные на пластинах HDD.',
+            q2: 'Типичная скорость вращения пластин в HDD — 5400 или 7200 об/мин.',
+            q3: 'Низкая цена за ГБ делает HDD популярным для больших объёмов данных.',
+            q4: 'HDD уязвимы из-за подвижных частей, таких как пластины и головки.',
+            q5: 'Форм-фактор 2.5" используется в ноутбуках для HDD.',
+            q6: 'SATA III — наиболее распространённый интерфейс для HDD.',
+            q7: 'Контроллер управляет чтением и записью данных в SSD.',
+            q8: 'SSD работают тише, так как не имеют подвижных частей.',
+            q9: 'Высокая скорость загрузки SSD важна для игровых ПК.',
+            q10: 'Высокая цена за ГБ ограничивает SSD для больших объёмов данных.',
+            q11: 'SSD 2.5" SATA внешне похож на 2.5" HDD.',
+            q12: 'SSD 2.5" подключаются через SATA III к материнской плате.',
+            q13: 'mSATA устарел, так как был заменён более компактным M.2.',
+            q14: '2280 — наиболее распространённый форм-фактор M.2 SATA SSD.',
+            q15: 'PCIe обеспечивает максимальную скорость для M.2 NVMe SSD.',
+            q16: 'M.2 NVMe SSD на PCIe Gen4 достигает скорости до 7000 МБ/с.',
+            q17: 'M.2 слот может поддерживать только SATA, что делает проверку совместимости важной.',
+            q18: 'HDD имеет самую низкую цену за 1 ГБ.',
+            q19: 'HDD лучше подходит для долговременного хранения данных.',
+            q20: 'SSD 2.5" SATA рекомендуется для бюджетных сборок ПК.',
+            q21: 'Любой SSD обеспечивает высокую устойчивость к ударам.',
+            q22: 'Оптимальный подход: SSD для системы и HDD для файлов.',
+            q23: 'M.2 (SATA или NVMe) экономит место, так как не требует кабелей.',
+            q24: 'Флеш-память NAND имеет ограниченное количество циклов перезаписи.',
+            q25: 'Знание интерфейсов и совместимости важно для выбора накопителя.'
+        };
+        const answers = {};
+
+        function startTest() {
+            document.querySelector('.intro').classList.remove('active');
+            currentQuestion = 1;
+            document.querySelector(`.question[data-question="${currentQuestion}"]`).classList.add('active');
+            document.querySelector('.buttons').classList.add('active');
+        }
+
+        function prevQuestion() {
+            if (currentQuestion > 1) {
+                document.querySelector(`.question[data-question="${currentQuestion}"]`).classList.remove('active');
+                currentQuestion--;
+                document.querySelector(`.question[data-question="${currentQuestion}"]`).classList.add('active');
+            }
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < totalQuestions) {
+                document.querySelector(`.question[data-question="${currentQuestion}"]`).classList.remove('active');
+                currentQuestion++;
+                document.querySelector(`.question[data-question="${currentQuestion}"]`).classList.add('active');
+            }
+        }
+
+        function finishTest() {
+            let score = 0;
+            for (let i = 1; i <= totalQuestions; i++) {
+                const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                if (selected) {
+                    answers[`q${i}`] = selected.value;
+                    if (selected.value === correctAnswers[`q${i}`]) {
+                        score++;
+                    }
+                }
+            }
+
+            document.querySelector(`.question[data-question="${currentQuestion}"]`).classList.remove('active');
+            document.querySelector('.buttons').classList.remove('active');
+            document.querySelector('.results').classList.add('active');
+            document.getElementById('score').innerText = `Вы набрали ${score} из ${totalQuestions} баллов!`;
+
+            const resultsTable = document.getElementById('resultsTable');
+            resultsTable.innerHTML = '';
+            for (let i = 1; i <= totalQuestions; i++) {
+                const row = document.createElement('tr');
+                const questionCell = document.createElement('td');
+                const userAnswerCell = document.createElement('td');
+                const correctAnswerCell = document.createElement('td');
+                const statusCell = document.createElement('td');
+                const explanationCell = document.createElement('td');
+
+                questionCell.innerText = questionsText[`q${i}`];
+                const userAnswer = answers[`q${i}`] || 'Не отвечено';
+                userAnswerCell.innerText = optionsText[`q${i}`][userAnswer] || 'Не отвечено';
+                correctAnswerCell.innerText = optionsText[`q${i}`][correctAnswers[`q${i}`]];
+                statusCell.innerText = userAnswer === correctAnswers[`q${i}`] ? 'Правильно' : 'Неправильно';
+                statusCell.className = userAnswer === correctAnswers[`q${i}`] ? 'correct' : 'incorrect';
+                explanationCell.innerText = explanations[`q${i}`];
+
+                row.appendChild(questionCell);
+                row.appendChild(userAnswerCell);
+                row.appendChild(correctAnswerCell);
+                row.appendChild(statusCell);
+                row.appendChild(explanationCell);
+                resultsTable.appendChild(row);
+            }
+        }
+
+        function restartTest() {
+            currentQuestion = 0;
+            document.querySelector('.results').classList.remove('active');
+            document.querySelector('.intro').classList.add('active');
+            document.querySelector('.buttons').classList.remove('active');
+            document.querySelectorAll('input[type="radio"]').forEach(input => input.checked = false);
+        }
+    </script>
+</body>
+</html>

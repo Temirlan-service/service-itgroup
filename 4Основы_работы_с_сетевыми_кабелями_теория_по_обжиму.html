@@ -1,0 +1,502 @@
+<script type="text/javascript">
+        var gk_isXlsx = false;
+        var gk_xlsxFileLookup = {};
+        var gk_fileData = {};
+        function filledCell(cell) {
+          return cell !== '' && cell != null;
+        }
+        function loadFileData(filename) {
+        if (gk_isXlsx && gk_xlsxFileLookup[filename]) {
+            try {
+                var workbook = XLSX.read(gk_fileData[filename], { type: 'base64' });
+                var firstSheetName = workbook.SheetNames[0];
+                var worksheet = workbook.Sheets[firstSheetName];
+
+                // Convert sheet to JSON to filter blank rows
+                var jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, blankrows: false, defval: '' });
+                // Filter out blank rows (rows where all cells are empty, null, or undefined)
+                var filteredData = jsonData.filter(row => row.some(filledCell));
+
+                // Heuristic to find the header row by ignoring rows with fewer filled cells than the next row
+                var headerRowIndex = filteredData.findIndex((row, index) =>
+                  row.filter(filledCell).length >= filteredData[index + 1]?.filter(filledCell).length
+                );
+                // Fallback
+                if (headerRowIndex === -1 || headerRowIndex > 25) {
+                  headerRowIndex = 0;
+                }
+
+                // Convert filtered JSON back to CSV
+                var csv = XLSX.utils.aoa_to_sheet(filteredData.slice(headerRowIndex)); // Create a new sheet from filtered array of arrays
+                csv = XLSX.utils.sheet_to_csv(csv, { header: 1 });
+                return csv;
+            } catch (e) {
+                console.error(e);
+                return "";
+            }
+        }
+        return gk_fileData[filename] || "";
+        }
+        </script><!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тест по работе с сетевыми кабелями</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f4f4f4;
+            text-align: center;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1, h2 {
+            color: #333;
+        }
+        .intro, .question, .results {
+            display: none;
+        }
+        .intro.active, .question.active, .results.active {
+            display: block;
+        }
+        .question label {
+            display: block;
+            margin: 10px 0;
+            font-size: 16px;
+        }
+        .buttons {
+            margin-top: 20px;
+            display: none;
+        }
+        .buttons.active {
+            display: block;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 5px;
+            background-color: #007BFF;
+            color: #fff;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        input[type="radio"] {
+            margin-right: 10px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .correct {
+            color: green;
+        }
+        .incorrect {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Вводная страница -->
+        <div class="intro active">
+            <h1>Тест по уроку</h1>
+            <p>Основы работы с сетевыми кабелями (теория по обжиму), проверьте свои знания. Желаю удачи!</p>
+            <p>Не подсматривайте ответы в интернете, НАДЗИРАТЕЛЬ наблюдает!</p>
+            <button onclick="startTest()">Начать тест</button>
+        </div>
+
+        <!-- Вопросы -->
+        <div class="question" data-question="1">
+            <h2>1. Какой тип кабеля чаще всего используется в локальных сетях (LAN)?</h2>
+            <label><input type="radio" name="q1" value="a"> Коаксиальный кабель</label>
+            <label><input type="radio" name="q1" value="b"> Витая пара</label>
+            <label><input type="radio" name="q1" value="c"> Оптоволоконный кабель</label>
+            <label><input type="radio" name="q1" value="d"> USB-кабель</label>
+        </div>
+        <div class="question" data-question="2">
+            <h2>2. Почему в витой паре провода скручены в пары?</h2>
+            <label><input type="radio" name="q2" value="a"> Для увеличения длины кабеля</label>
+            <label><input type="radio" name="q2" value="b"> Для уменьшения электромагнитных помех</label>
+            <label><input type="radio" name="q2" value="c"> Для повышения скорости передачи</label>
+            <label><input type="radio" name="q2" value="d"> Для упрощения обжима</label>
+        </div>
+        <div class="question" data-question="3">
+            <h2>3. Какая категория витой пары подходит для домашних сетей с скоростью до 1 Гбит/с?</h2>
+            <label><input type="radio" name="q3" value="a"> Cat 6</label>
+            <label><input type="radio" name="q3" value="b"> Cat 5e</label>
+            <label><input type="radio" name="q3" value="c"> Cat 7</label>
+            <label><input type="radio" name="q3" value="d"> Cat 6a</label>
+        </div>
+        <div class="question" data-question="4">
+            <h2>4. Для чего используется разъём RJ-45 в сетевых кабелях?</h2>
+            <label><input type="radio" name="q4" value="a"> Для подключения к блоку питания</label>
+            <label><input type="radio" name="q4" value="b"> Для соединения сетевых устройств</label>
+            <label><input type="radio" name="q4" value="c"> Для передачи аудиосигнала</label>
+            <label><input type="radio" name="q4" value="d"> Для подключения монитора</label>
+        </div>
+        <div class="question" data-question="5">
+            <h2>5. Какая категория витой пары обеспечивает 10 Гбит/с на расстоянии до 100 м?</h2>
+            <label><input type="radio" name="q5" value="a"> Cat 5e</label>
+            <label><input type="radio" name="q5" value="b"> Cat 6</label>
+            <label><input type="radio" name="q5" value="c"> Cat 6a</label>
+            <label><input type="radio" name="q5" value="d"> Cat 7</label>
+        </div>
+        <div class="question" data-question="6">
+            <h2>6. Какой инструмент необходим для установки разъёма RJ-45 на кабель?</h2>
+            <label><input type="radio" name="q6" value="a"> Отвёртка</label>
+            <label><input type="radio" name="q6" value="b"> Кримпер</label>
+            <label><input type="radio" name="q6" value="c"> Паяльник</label>
+            <label><input type="radio" name="q6" value="d"> Мультиметр</label>
+        </div>
+        <div class="question" data-question="7">
+            <h2>7. Для чего используется тестер кабеля после обжима?</h2>
+            <label><input type="radio" name="q7" value="a"> Для измерения длины кабеля</label>
+            <label><input type="radio" name="q7" value="b"> Для проверки соединения</label>
+            <label><input type="radio" name="q7" value="c"> Для зачистки проводов</label>
+            <label><input type="radio" name="q7" value="d"> Для настройки роутера</label>
+        </div>
+        <div class="question" data-question="8">
+            <h2>8. Какой стандарт обжима чаще применяется в домашних сетях?</h2>
+            <label><input type="radio" name="q8" value="a"> T568A</label>
+            <label><input type="radio" name="q8" value="b"> T568B</label>
+            <label><input type="radio" name="q8" value="c"> T568C</label>
+            <label><input type="radio" name="q8" value="d"> T568D</label>
+        </div>
+        <div class="question" data-question="9">
+            <h2>9. Какой цвет провода соответствует контакту 1 в стандарте T568B?</h2>
+            <label><input type="radio" name="q9" value="a"> Бело-зеленый</label>
+            <label><input type="radio" name="q9" value="b"> Бело-оранжевый</label>
+            <label><input type="radio" name="q9" value="c"> Синий</label>
+            <label><input type="radio" name="q9" value="d"> Коричневый</label>
+        </div>
+        <div class="question" data-question="10">
+            <h2>10. Какой тип кабеля используется для соединения ПК с роутером?</h2>
+            <label><input type="radio" name="q10" value="a"> Кроссовер</label>
+            <label><input type="radio" name="q10" value="b"> Прямой</label>
+            <label><input type="radio" name="q10" value="c"> Коаксиальный</label>
+            <label><input type="radio" name="q10" value="d"> Оптоволоконный</label>
+        </div>
+        <div class="question" data-question="11">
+            <h2>11. Какой стандарт обжима применяется на одном конце кроссоверного кабеля?</h2>
+            <label><input type="radio" name="q11" value="a"> T568B</label>
+            <label><input type="radio" name="q11" value="b"> T568A</label>
+            <label><input type="radio" name="q11" value="c"> Оба T568B</label>
+            <label><input type="radio" name="q11" value="d"> Оба T568A</label>
+        </div>
+        <div class="question" data-question="12">
+            <h2>12. Какой длины должны быть провода после обрезки для обжима?</h2>
+            <label><input type="radio" name="q12" value="a"> 5–6 мм</label>
+            <label><input type="radio" name="q12" value="b"> 12–13 мм</label>
+            <label><input type="radio" name="q12" value="c"> 20–25 мм</label>
+            <label><input type="radio" name="q12" value="d"> 30–35 мм</label>
+        </div>
+        <div class="question" data-question="13">
+            <h2>13. Что нужно сделать первым при обжиме витой пары?</h2>
+            <label><input type="radio" name="q13" value="a"> Вставить провода в разъём</label>
+            <label><input type="radio" name="q13" value="b"> Снять внешнюю оболочку кабеля</label>
+            <label><input type="radio" name="q13" value="c"> Обжать разъём кримпером</label>
+            <label><input type="radio" name="q13" value="d"> Проверить тестером</label>
+        </div>
+        <div class="question" data-question="14">
+            <h2>14. Какой шаг обжима следует после вставки проводов в разъём RJ-45?</h2>
+            <label><input type="radio" name="q14" value="a"> Снять оболочку кабеля</label>
+            <label><input type="radio" name="q14" value="b"> Обжать разъём кримпером</label>
+            <label><input type="radio" name="q14" value="c"> Проверить тестером</label>
+            <label><input type="radio" name="q14" value="d"> Распутать пары проводов</label>
+        </div>
+        <div class="question" data-question="15">
+            <h2>15. Что проверяют при визуальной проверке обжатого кабеля?</h2>
+            <label><input type="radio" name="q15" value="a"> Скорость передачи данных</label>
+            <label><input type="radio" name="q15" value="b"> Провода вставлены до упора</label>
+            <label><input type="radio" name="q15" value="c"> Температуру кабеля</label>
+            <label><input type="radio" name="q15" value="d"> Длину кабеля</label>
+        </div>
+        <div class="question" data-question="16">
+            <h2>16. Какой результат тестера кабеля указывает на исправный кабель?</h2>
+            <label><input type="radio" name="q16" value="a"> Только 4 контакта горят</label>
+            <label><input type="radio" name="q16" value="b"> Все 8 контактов загораются</label>
+            <label><input type="radio" name="q16" value="c"> Контакты мигают случайно</label>
+            <label><input type="radio" name="q16" value="d"> Ничего не горит</label>
+        </div>
+        <div class="question" data-question="17">
+            <h2>17. Что означает, если контакт не горит на тестере кабеля?</h2>
+            <label><input type="radio" name="q17" value="a"> Высокая скорость соединения</label>
+            <label><input type="radio" name="q17" value="b"> Брак в обжиме</label>
+            <label><input type="radio" name="q17" value="c"> Нормальная работа</label>
+            <label><input type="radio" name="q17" value="d"> Проблема в роутере</label>
+        </div>
+        <div class="question" data-question="18">
+            <h2>18. Какой индикатор на роутере подтверждает исправность кабеля?</h2>
+            <label><input type="radio" name="q18" value="a"> Красный мигающий</label>
+            <label><input type="radio" name="q18" value="b"> Зеленый горящий</label>
+            <label><input type="radio" name="q18" value="c"> Синий постоянный</label>
+            <label><input type="radio" name="q18" value="d"> Отсутствие индикатора</label>
+        </div>
+        <div class="question" data-question="19">
+            <h2>19. Какой статус в Windows указывает на рабочий сетевой кабель?</h2>
+            <label><input type="radio" name="q19" value="a"> Сетевой кабель не подключен</label>
+            <label><input type="radio" name="q19" value="b"> Подключено</label>
+            <label><input type="radio" name="q19" value="c"> Ограниченный доступ</label>
+            <label><input type="radio" name="q19" value="d"> Отключено</label>
+        </div>
+        <div class="question" data-question="20">
+            <h2>20. Какой метод проверки кабеля использует два ПК без роутера?</h2>
+            <label><input type="radio" name="q20" value="a"> Проверка через тестер</label>
+            <label><input type="radio" name="q20" value="b"> Прямое соединение ПК</label>
+            <label><input type="radio" name="q20" value="c"> Проверка через роутер</label>
+            <label><input type="radio" name="q20" value="d"> Визуальная проверка</label>
+        </div>
+        <div class="question" data-question="21">
+            <h2>21. Какой индикатор на сетевой карте показывает, что соединение установлено?</h2>
+            <label><input type="radio" name="q21" value="a"> Желтый мигающий</label>
+            <label><input type="radio" name="q21" value="b"> Зеленый</label>
+            <label><input type="radio" name="q21" value="c"> Красный</label>
+            <label><input type="radio" name="q21" value="d"> Синий</label>
+        </div>
+        <div class="question" data-question="22">
+            <h2>22. Что означает мигающий индикатор на сетевой карте?</h2>
+            <label><input type="radio" name="q22" value="a"> Проблема с кабелем</label>
+            <label><input type="radio" name="q22" value="b"> Передача данных</label>
+            <label><input type="radio" name="q22" value="c"> Отключенное соединение</label>
+            <label><input type="radio" name="q22" value="d"> Низкая скорость</label>
+        </div>
+        <div class="question" data-question="23">
+            <h2>23. Какую команду в Windows используют для проверки сетевых подключений?</h2>
+            <label><input type="radio" name="q23" value="a"> ping</label>
+            <label><input type="radio" name="q23" value="b"> ncpa.cpl</label>
+            <label><input type="radio" name="q23" value="c"> ipconfig</label>
+            <label><input type="radio" name="q23" value="d"> netstat</label>
+        </div>
+        <div class="question" data-question="24">
+            <h2>24. Какая категория витой пары лучше всего подходит для дата-центров?</h2>
+            <label><input type="radio" name="q24" value="a"> Cat 5e</label>
+            <label><input type="radio" name="q24" value="b"> Cat 6</label>
+            <label><input type="radio" name="q24" value="c"> Cat 6a</label>
+            <label><input type="radio" name="q24" value="d"> Cat 7</label>
+        </div>
+        <div class="question" data-question="25">
+            <h2>25. Что нужно убедиться при визуальной проверке разъёма RJ-45?</h2>
+            <label><input type="radio" name="q25" value="a"> Температура разъёма</label>
+            <label><input type="radio" name="q25" value="b"> Контакты в разъёме зажаты</label>
+            <label><input type="radio" name="q25" value="c"> Длина кабеля</label>
+            <label><input type="radio" name="q25" value="d"> Скорость соединения</label>
+        </div>
+
+        <!-- Кнопки навигации -->
+        <div class="buttons">
+            <button onclick="prevQuestion()">Предыдущий вопрос</button>
+            <button onclick="nextQuestion()">Следующий вопрос</button>
+            <button onclick="finishTest()">Завершить тест</button>
+        </div>
+
+        <!-- Результаты -->
+        <div class="results">
+            <h2>Результаты теста</h2>
+            <p id="score"></p>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Вопрос</th>
+                        <th>Ваш ответ</th>
+                        <th>Правильный ответ</th>
+                        <th>Статус</th>
+                        <th>Объяснение</th>
+                    </tr>
+                </thead>
+                <tbody id="resultsTable"></tbody>
+            </table>
+            <button onclick="restartTest()">Пройти тест заново</button>
+        </div>
+    </div>
+
+    <script>
+        let currentQuestion = 0;
+        const totalQuestions = 25;
+        const correctAnswers = {
+            q1: 'b', q2: 'b', q3: 'b', q4: 'b', q5: 'c',
+            q6: 'b', q7: 'b', q8: 'b', q9: 'b', q10: 'b',
+            q11: 'b', q12: 'b', q13: 'b', q14: 'b', q15: 'b',
+            q16: 'b', q17: 'b', q18: 'b', q19: 'b', q20: 'b',
+            q21: 'b', q22: 'b', q23: 'b', q24: 'c', q25: 'b'
+        };
+        const questionsText = {
+            q1: 'Какой тип кабеля чаще всего используется в локальных сетях (LAN)?',
+            q2: 'Почему в витой паре провода скручены в пары?',
+            q3: 'Какая категория витой пары подходит для домашних сетей с скоростью до 1 Гбит/с?',
+            q4: 'Для чего используется разъём RJ-45 в сетевых кабелях?',
+            q5: 'Какая категория витой пары обеспечивает 10 Гбит/с на расстоянии до 100 м?',
+            q6: 'Какой инструмент необходим для установки разъёма RJ-45 на кабель?',
+            q7: 'Для чего используется тестер кабеля после обжима?',
+            q8: 'Какой стандарт обжима чаще применяется в домашних сетях?',
+            q9: 'Какой цвет провода соответствует контакту 1 в стандарте T568B?',
+            q10: 'Какой тип кабеля используется для соединения ПК с роутером?',
+            q11: 'Какой стандарт обжима применяется на одном конце кроссоверного кабеля?',
+            q12: 'Какой длины должны быть провода после обрезки для обжима?',
+            q13: 'Что нужно сделать первым при обжиме витой пары?',
+            q14: 'Какой шаг обжима следует после вставки проводов в разъём RJ-45?',
+            q15: 'Что проверяют при визуальной проверке обжатого кабеля?',
+            q16: 'Какой результат тестера кабеля указывает на исправный кабель?',
+            q17: 'Что означает, если контакт не горит на тестере кабеля?',
+            q18: 'Какой индикатор на роутере подтверждает исправность кабеля?',
+            q19: 'Какой статус в Windows указывает на рабочий сетевой кабель?',
+            q20: 'Какой метод проверки кабеля использует два ПК без роутера?',
+            q21: 'Какой индикатор на сетевой карте показывает, что соединение установлено?',
+            q22: 'Что означает мигающий индикатор на сетевой карте?',
+            q23: 'Какую команду в Windows используют для проверки сетевых подключений?',
+            q24: 'Какая категория витой пары лучше всего подходит для дата-центров?',
+            q25: 'Что нужно убедиться при визуальной проверке разъёма RJ-45?'
+        };
+        const optionsText = {
+            q1: { a: 'Коаксиальный кабель', b: 'Витая пара', c: 'Оптоволоконный кабель', d: 'USB-кабель' },
+            q2: { a: 'Для увеличения длины кабеля', b: 'Для уменьшения электромагнитных помех', c: 'Для повышения скорости передачи', d: 'Для упрощения обжима' },
+            q3: { a: 'Cat 6', b: 'Cat 5e', c: 'Cat 7', d: 'Cat 6a' },
+            q4: { a: 'Для подключения к блоку питания', b: 'Для соединения сетевых устройств', c: 'Для передачи аудиосигнала', d: 'Для подключения монитора' },
+            q5: { a: 'Cat 5e', b: 'Cat 6', c: 'Cat 6a', d: 'Cat 7' },
+            q6: { a: 'Отвёртка', b: 'Кримпер', c: 'Паяльник', d: 'Мультиметр' },
+            q7: { a: 'Для измерения длины кабеля', b: 'Для проверки соединения', c: 'Для зачистки проводов', d: 'Для настройки роутера' },
+            q8: { a: 'T568A', b: 'T568B', c: 'T568C', d: 'T568D' },
+            q9: { a: 'Бело-зеленый', b: 'Бело-оранжевый', c: 'Синий', d: 'Коричневый' },
+            q10: { a: 'Кроссовер', b: 'Прямой', c: 'Коаксиальный', d: 'Оптоволоконный' },
+            q11: { a: 'T568B', b: 'T568A', c: 'Оба T568B', d: 'Оба T568A' },
+            q12: { a: '5–6 мм', b: '12–13 мм', c: '20–25 мм', d: '30–35 мм' },
+            q13: { a: 'Вставить провода в разъём', b: 'Снять внешнюю оболочку кабеля', c: 'Обжать разъём кримпером', d: 'Проверить тестером' },
+            q14: { a: 'Снять оболочку кабеля', b: 'Обжать разъём кримпером', c: 'Проверить тестером', d: 'Распутать пары проводов' },
+            q15: { a: 'Скорость передачи данных', b: 'Провода вставлены до упора', c: 'Температуру кабеля', d: 'Длину кабеля' },
+            q16: { a: 'Только 4 контакта горят', b: 'Все 8 контактов загораются', c: 'Контакты мигают случайно', d: 'Ничего не горит' },
+            q17: { a: 'Высокая скорость соединения', b: 'Брак в обжиме', c: 'Нормальная работа', d: 'Проблема в роутере' },
+            q18: { a: 'Красный мигающий', b: 'Зеленый горящий', c: 'Синий постоянный', d: 'Отсутствие индикатора' },
+            q19: { a: 'Сетевой кабель не подключен', b: 'Подключено', c: 'Ограниченный доступ', d: 'Отключено' },
+            q20: { a: 'Проверка через тестер', b: 'Прямое соединение ПК', c: 'Проверка через роутер', d: 'Визуальная проверка' },
+            q21: { a: 'Желтый мигающий', b: 'Зеленый', c: 'Красный', d: 'Синий' },
+            q22: { a: 'Проблема с кабелем', b: 'Передача данных', c: 'Отключенное соединение', d: 'Низкая скорость' },
+            q23: { a: 'ping', b: 'ncpa.cpl', c: 'ipconfig', d: 'netstat' },
+            q24: { a: 'Cat 5e', b: 'Cat 6', c: 'Cat 6a', d: 'Cat 7' },
+            q25: { a: 'Температура разъёма', b: 'Контакты в разъёме зажаты', c: 'Длина кабеля', d: 'Скорость соединения' }
+        };
+        const explanations = {
+            q1: 'Витая пара — основной тип кабеля для локальных сетей (LAN).',
+            q2: 'Скручивание проводов в витой паре уменьшает электромагнитные помехи.',
+            q3: 'Cat 5e подходит для домашних сетей с скоростью до 1 Гбит/с.',
+            q4: 'Разъём RJ-45 используется для соединения сетевых устройств, таких как ПК и роутеры.',
+            q5: 'Cat 6a обеспечивает скорость 10 Гбит/с на расстоянии до 100 м.',
+            q6: 'Кримпер необходим для установки разъёма RJ-45 на кабель.',
+            q7: 'Тестер кабеля используется для проверки соединения после обжима.',
+            q8: 'T568B чаще применяется в домашних и коммерческих сетях.',
+            q9: 'В стандарте T568B контакт 1 соответствует бело-оранжевому проводу.',
+            q10: 'Прямой кабель используется для соединения ПК с роутером.',
+            q11: 'Кроссоверный кабель обжимается по T568A на одном конце и T568B на другом.',
+            q12: 'Провода обрезают до длины 12–13 мм для обжима.',
+            q13: 'Первым шагом при обжиме снимают внешнюю оболочку кабеля.',
+            q14: 'После вставки проводов в разъём RJ-45 его обжимают кримпером.',
+            q15: 'При визуальной проверке убеждаются, что провода вставлены до упора.',
+            q16: 'Исправный кабель показывает свечение всех 8 контактов на тестере.',
+            q17: 'Негорящий контакт на тестере указывает на брак в обжиме.',
+            q18: 'Зеленый горящий индикатор на роутере подтверждает исправность кабеля.',
+            q19: 'Статус "Подключено" в Windows указывает на рабочий кабель.',
+            q20: 'Прямое соединение двух ПК используется для проверки кабеля без роутера.',
+            q21: 'Зеленый индикатор на сетевой карте показывает установленное соединение.',
+            q22: 'Мигающий индикатор означает передачу данных.',
+            q23: 'Команда ncpa.cpl открывает окно сетевых подключений в Windows.',
+            q24: 'Cat 6a лучше всего подходит для дата-центров благодаря скорости и дальности.',
+            q25: 'При визуальной проверке убеждаются, что контакты в разъёме RJ-45 зажаты.'
+        };
+        const answers = {};
+
+        function startTest() {
+            document.querySelector('.intro').classList.remove('active');
+            currentQuestion = 1;
+            document.querySelector(`.question[data-question="${currentQuestion}"]`).classList.add('active');
+            document.querySelector('.buttons').classList.add('active');
+        }
+
+        function prevQuestion() {
+            if (currentQuestion > 1) {
+                document.querySelector(`.question[data-question="${currentQuestion}"]`).classList.remove('active');
+                currentQuestion--;
+                document.querySelector(`.question[data-question="${currentQuestion}"]`).classList.add('active');
+            }
+        }
+
+        function nextQuestion() {
+            if (currentQuestion < totalQuestions) {
+                document.querySelector(`.question[data-question="${currentQuestion}"]`).classList.remove('active');
+                currentQuestion++;
+                document.querySelector(`.question[data-question="${currentQuestion}"]`).classList.add('active');
+            }
+        }
+
+        function finishTest() {
+            let score = 0;
+            for (let i = 1; i <= totalQuestions; i++) {
+                const selected = document.querySelector(`input[name="q${i}"]:checked`);
+                if (selected) {
+                    answers[`q${i}`] = selected.value;
+                    if (selected.value === correctAnswers[`q${i}`]) {
+                        score++;
+                    }
+                }
+            }
+
+            document.querySelector(`.question[data-question="${currentQuestion}"]`).classList.remove('active');
+            document.querySelector('.buttons').classList.remove('active');
+            document.querySelector('.results').classList.add('active');
+            document.getElementById('score').innerText = `Вы набрали ${score} из ${totalQuestions} баллов!`;
+
+            const resultsTable = document.getElementById('resultsTable');
+            resultsTable.innerHTML = '';
+            for (let i = 1; i <= totalQuestions; i++) {
+                const row = document.createElement('tr');
+                const questionCell = document.createElement('td');
+                const userAnswerCell = document.createElement('td');
+                const correctAnswerCell = document.createElement('td');
+                const statusCell = document.createElement('td');
+                const explanationCell = document.createElement('td');
+
+                questionCell.innerText = questionsText[`q${i}`];
+                const userAnswer = answers[`q${i}`] || 'Не отвечено';
+                userAnswerCell.innerText = optionsText[`q${i}`][userAnswer] || 'Не отвечено';
+                correctAnswerCell.innerText = optionsText[`q${i}`][correctAnswers[`q${i}`]];
+                statusCell.innerText = userAnswer === correctAnswers[`q${i}`] ? 'Правильно' : 'Неправильно';
+                statusCell.className = userAnswer === correctAnswers[`q${i}`] ? 'correct' : 'incorrect';
+                explanationCell.innerText = explanations[`q${i}`];
+
+                row.appendChild(questionCell);
+                row.appendChild(userAnswerCell);
+                row.appendChild(correctAnswerCell);
+                row.appendChild(statusCell);
+                row.appendChild(explanationCell);
+                resultsTable.appendChild(row);
+            }
+        }
+
+        function restartTest() {
+            currentQuestion = 0;
+            document.querySelector('.results').classList.remove('active');
+            document.querySelector('.intro').classList.add('active');
+            document.querySelector('.buttons').classList.remove('active');
+            document.querySelectorAll('input[type="radio"]').forEach(input => input.checked = false);
+        }
+    </script>
+</body>
+</html>
